@@ -1,0 +1,33 @@
+﻿{
+    "dbName": "prevoEmployees",
+    "dbConfig": {
+        "server": "localhost",
+        "options": {
+            "port": 5432,
+            "trustServerCertificate": true
+        },
+        "authentication": {
+            "type": "default",
+            "options": {
+                "userName": "postgres",
+                "password": "prevo"
+            }
+        },
+        "dialectOptions": {
+           
+            "requestTimeout": 300000
+          
+        },
+        "pool": {
+            "max": 1000,
+            "min": 0,
+            "idle": 1000000
+        }
+    },
+    "email": "connect2.tms@gmail.com",
+    "password": "plxfncrwhtfkxosc",
+    "serverKey":"AAAAZv4OTlg:APA91bH3Pui6pQWtds1g9qV0yqOaTI3bCxTjgSvg82jT_xOEFzFzdU-kNpW6TOo2pdS0CWr2BSu3BwpIhhf2gaLR4btMdn7Oy_Lq24qer6TKrL3cuT9OSduWPjeXRBnZ-hC_w5Co4d4e",
+    "secret": "THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING",
+    "emailKey":"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",
+    "baseUrl":"/api/v1/uat"
+}

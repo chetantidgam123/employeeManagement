@@ -1,0 +1,40 @@
+// If you want to override variables do it here
+@import "variables";
+
+$enable-ltr: true;
+$enable-rtl: true;
+
+// Import CoreUI for React components library
+@import "@coreui/coreui/scss/coreui";
+
+// Import Chart.js custom tooltips styles
+@import "@coreui/chartjs/scss/coreui-chartjs";
+
+@import "layout";
+@import "example";
+
+// If you want to add custom CSS you can put it here.
+@import "custom";
+
+.sidebar_cst::-webkit-scrollbar {
+    width: 10px;
+    height: 200px;
+}
+
+/* Track */
+.sidebar_cst::-webkit-scrollbar-track {
+// background: #3c4b64;
+background-color: transparent !important;
+}
+
+/* Handle */
+.sidebar_cst::-webkit-scrollbar-thumb {
+    background: #888;
+border: 0.2em solid var(--cui-body-bg, #9999998c);
+        border-radius: 100vw;
+}
+
+/* Handle on hover */
+.sidebar_cst::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
