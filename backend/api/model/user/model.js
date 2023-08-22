@@ -12,5 +12,5 @@ function userModel(sequelize) {
             withHash: { attributes: {}, }
         }
     };
-    return sequelize.define('TBL_USER', userSchem, options);
+    return sequelize.define('EMPLOYEE', userSchem, options);
 }
