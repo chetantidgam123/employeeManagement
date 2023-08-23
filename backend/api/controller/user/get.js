@@ -5,26 +5,38 @@ const { logs } = require('../../../_middleware');
 
 const { omitHash } = require('../../../_helpers/userHelperFunction');
 const getUserById = ({ userModel }, { config }) => async (req, res, next) => {
-    let usermodel = userModel(db.sequelize)
+    // let usermodel = userModel(db.sequelize)
     try {
         const { id } = req.params
-        const user = await usermodel.findByPk(id);
-        if (!user) throw 'User not found';
-        let responce = { status: true, code: 200, message: "", data: { ...omitHash(user.get()) } }
-        logs(req, responce)
-        return res.json({ status: true, code: 200, message: "", data: { ...omitHash(user.get()) } });
+           const finduserQuery = `select middlename,firstname,emp_id,lastname,gender,dob,marital_status,temp_add,permanant_add,email_id,mobilenumber,par_mobilenumber,education,degree_date,degrre_cert,experiance_type,experiance_duration,pre_org_name,pre_org_address,pre_org_designation,role from public."EMPLOYEEs" where id =?`;
+      const user = await db.sequelize.query(finduserQuery, {
+        replacements: [id],
+        type: QueryTypes.SELECT,
+      });
+        if (!user || user.length==0 ) throw 'User not found';
+        return res.json({ status: true, code: 200, message: "", data: user });
     } catch (error) {
         next(error)
     }
 }
 const getAllEmployee = ({ userModel }, { config }) => async (req, res, next) => {
     try {
-         const users = await db.sequelize.query(`SELECT emp_id,firstname,lastname,email_id,mobilenumber FROM public."TBL_USERs" where role='user'`, { type: QueryTypes.SELECT });
+         const users = await db.sequelize.query(`SELECT id ,emp_id,firstname,lastname,email_id,mobilenumber,is_active FROM public."EMPLOYEEs" where role='employee'`, { type: QueryTypes.SELECT });
         if (!users || users.length==0 ) throw 'User not found';
         return res.json({ status: true, code: 200, message: "", data: users });
     } catch (error) {
         next(error)
     }
 }
+const getEmployeeId = ({ userModel }, { config }) => async (req, res, next) => {
+    try {
+         const maxId = await db.sequelize.query(`SELECT MAX(emp_number) AS maxId FROM public.max_emp_id`, { type: QueryTypes.SELECT });
+         let newId = `PT-${Number(maxId[0].maxid)+1}`
+        if (!maxId || maxId.length==0 ) throw 'Please try again or contact administration';
+        return res.json({ status: true, code: 200, message: "", data: newId });
+    } catch (error) {
+        next(error)
+    }
+}
 
-module.exports = { getUserById,getAllEmployee }
+module.exports = { getUserById,getAllEmployee,getEmployeeId }

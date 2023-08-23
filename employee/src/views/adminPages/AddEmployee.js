@@ -1,10 +1,13 @@
-import { CButton } from '@coreui/react'
 import { useFormik } from 'formik'
 import React from 'react'
 import { registerEmployeeSchema } from '../Validations'
+import { EmployeeId, getUserById, registration } from 'src/Services/service'
+import { useNavigate } from 'react-router-dom'
+import { error_toast, success_toast } from 'src/Services/swalService'
 
 const AddEmployee = () => {
-  const Formik = useFormik({
+  const navigate = useNavigate()
+  const formik = useFormik({
     initialValues: {
       firstname: '',
       middlename: '',
@@ -20,7 +23,8 @@ const AddEmployee = () => {
       permanant_add: '',
       education: '',
       degree_date: '',
-      experiance_type: '',
+      degrre_cert: null,
+      experiance_type: 'Fresher',
       experiance_Duration: '',
       pre_org_name: '',
       pre_org_address: '',
@@ -29,10 +33,47 @@ const AddEmployee = () => {
     },
     validationSchema: registerEmployeeSchema,
     onSubmit: (values) => {
-      console.log(values)
-      console.log(Formik.values + 'values...')
+      registerEmployee(values)
     },
   })
+  const registerEmployee = async (values) => {
+    const formdata = new FormData()
+    for (const key in formik.values) {
+      if (formik.values.hasOwnProperty(key)) {
+        // Check if the property is an own property (not inherited)
+        formdata.append(key, formik.values[key])
+        // if (key === 'degrre_cert') {
+        // } else {
+        //   formdata.append(key, formik.values[key])
+        // }
+      }
+    }
+
+    await registration(values)
+      .then((result) => {
+        if (result.data.code == 200) {
+          success_toast(result.data.message)
+          navigate('/emplist')
+        } else {
+          error_toast(result.data.message)
+        }
+      })
+      .catch((err) => {
+        error_toast(err)
+      })
+  }
+  const getEmployeeId = async () => {
+    await EmployeeId()
+      .then((result) => {
+        if (result.data.code == 200) {
+          formik.setFieldValue('emp_id', result.data.data)
+        } else {
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
   return (
     <div className="col-12">
@@ -41,7 +82,7 @@ const AddEmployee = () => {
           <h4>Employee Details</h4>
         </div>
         <div className="card-body">
-          <form action="">
+          <form onSubmit={formik.handleSubmit} action="" method="">
             <div className="row">
               <div className="col-12">
                 <h6>Personal Details</h6>
@@ -55,10 +96,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="firstname"
                   placeholder="Enter Name"
-                  name='firstname'
-                  value={Formik.values.firstname} onChange={Formik.handleChange} onBlur={Formik.handleBlur}
+                  name="firstname"
+                  value={formik.values.firstname}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {Formik.errors.firstname&&Formik.touched.firstname?<p className='text-danger'>{Formik.errors.firstname}</p>:null}
+                {formik.errors.firstname && formik.touched.firstname ? (
+                  <p className="text-danger">{formik.errors.firstname}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="middle_name" className="form-label">
@@ -69,10 +114,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="middle_name"
                   placeholder="Enter Name"
-                  name='middlename'
-                  value={Formik.values.middlename} onChange={Formik.handleChange} onBlur={Formik.handleBlur}
+                  name="middlename"
+                  value={formik.values.middlename}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {Formik.errors.middlename&&Formik.touched.middlename?<p className='text-danger'>{Formik.errors.middlename}</p>:null}
+                {formik.errors.middlename && formik.touched.middlename ? (
+                  <p className="text-danger">{formik.errors.middlename}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="lastname" className="form-label">
@@ -83,24 +132,32 @@ const AddEmployee = () => {
                   className="form-control"
                   id="lastname"
                   placeholder="Enter Name"
-                  name='lastname'    
-                  value={Formik.values.lastname} onChange={Formik.handleChange} onBlur={Formik.handleBlur}
+                  name="lastname"
+                  value={formik.values.lastname}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {Formik.errors.lastname&&Formik.touched.lastname?<p className='text-danger'>{Formik.errors.lastname}</p>:null}
+                {formik.errors.lastname && formik.touched.lastname ? (
+                  <p className="text-danger">{formik.errors.lastname}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="dob" className="form-label">
                   Date of Birth
                 </label>
-                <input 
-                type="date" 
-                className="form-control" 
-                id="dob" 
-                placeholder="Enter Name"
-                name='dob'
-                value={Formik.values.dob} onChange={Formik.handleChange} onBlur={Formik.handleBlur}
+                <input
+                  type="date"
+                  className="form-control"
+                  id="dob"
+                  placeholder="Enter Name"
+                  name="dob"
+                  value={formik.values.dob}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
-                {Formik.errors.dob&&Formik.touched.dob?<p className='text-danger'>{Formik.errors.dob}</p>:null}
+                {formik.errors.dob && formik.touched.dob ? (
+                  <p className="text-danger">{formik.errors.dob}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="dob" className="form-label">
@@ -113,7 +170,9 @@ const AddEmployee = () => {
                       type="radio"
                       name="gender"
                       id="inlineRadio1"
-                      value={Formik.values.gender} onChange={Formik.handleChange}
+                      value="Male"
+                      checked={formik.values.gender === 'Male'}
+                      onChange={formik.handleChange}
                     />
                     <label className="form-check-label" htmlFor="inlineRadio1">
                       Male
@@ -125,7 +184,9 @@ const AddEmployee = () => {
                       type="radio"
                       name="gender"
                       id="inlineRadio2"
-                      value={Formik.values.gender} onChange={Formik.handleChange}
+                      value="Female"
+                      checked={formik.values.gender === 'Female'}
+                      onChange={formik.handleChange}
                     />
                     <label className="form-check-label" htmlFor="inlineRadio2">
                       Female
@@ -137,26 +198,42 @@ const AddEmployee = () => {
                       type="radio"
                       name="gender"
                       id="inlineRadio3"
-                      value={Formik.values.gender} onChange={Formik.handleChange}
+                      value="Other"
+                      checked={formik.values.gender === 'Other'}
+                      onChange={formik.handleChange}
                     />
                     <label className="form-check-label" htmlFor="inlineRadio3">
                       Other
                     </label>
                   </div>
                 </div>
-                {Formik.errors.gender&&Formik.touched.gender?<p className='text-danger'>{Formik.errors.gender}</p>:null}
+                {formik.errors.gender && formik.touched.gender ? (
+                  <p className="text-danger">{formik.errors.gender}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="mobile" className="form-label">
                   Marital Status
                 </label>
-                <select id="inputState" className="form-select">
-                  <option defaultValue>Choose...</option>
-                  <option>Single</option>
-                  <option>Married</option>
-                  <option>widowed</option>
-                  <option>Divorce</option>
+                <select
+                  id="inputState"
+                  name="marital_status"
+                  value={formik.values.marital_status}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="form-select"
+                >
+                  <option defaultValue value="null">
+                    Choose...
+                  </option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="widowed">widowed</option>
+                  <option value="Divorce">Divorce</option>
                 </select>
+                {formik.errors.marital_status && formik.touched.marital_status ? (
+                  <p className="text-danger">{formik.errors.marital_status}</p>
+                ) : null}
               </div>
               <div className="col-12">
                 <h6>Contact Details</h6>
@@ -170,7 +247,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="email"
                   placeholder="Enter Email Id"
+                  name="email_id"
+                  value={formik.values.email_id}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.email_id && formik.touched.email_id ? (
+                  <p className="text-danger">{formik.errors.email_id}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="mobile" className="form-label">
@@ -181,7 +265,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="mobile"
                   placeholder="Enter Mobile Number"
+                  name="mobilenumber"
+                  value={formik.values.mobilenumber}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.mobilenumber && formik.touched.mobilenumber ? (
+                  <p className="text-danger">{formik.errors.mobilenumber}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="mobile1" className="form-label">
@@ -192,7 +283,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="mobile1"
                   placeholder="Enter Mobile Number"
+                  name="par_mobilenumber"
+                  value={formik.values.par_mobilenumber}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.par_mobilenumber && formik.touched.par_mobilenumber ? (
+                  <p className="text-danger">{formik.errors.par_mobilenumber}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-6">
                 <label htmlFor="lastname" className="form-label">
@@ -203,7 +301,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="lastname"
                   placeholder="Enter Address"
+                  name="temp_add"
+                  value={formik.values.temp_add}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.temp_add && formik.touched.temp_add ? (
+                  <p className="text-danger">{formik.errors.temp_add}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-6">
                 <label htmlFor="lastname" className="form-label">
@@ -214,7 +319,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="lastname"
                   placeholder="Enter Address"
+                  name="permanant_add"
+                  value={formik.values.permanant_add}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.permanant_add && formik.touched.permanant_add ? (
+                  <p className="text-danger">{formik.errors.permanant_add}</p>
+                ) : null}
               </div>
               <div className="col-12">
                 <h6>Education Details</h6>
@@ -223,24 +335,61 @@ const AddEmployee = () => {
                 <label htmlFor="mobile" className="form-label">
                   Highest Qualification
                 </label>
-                <select id="inputState" className="form-select">
-                  <option defaultValue>Choose...</option>
-                  <option>12th</option>
-                  <option>Graduation</option>
-                  <option>PostGraduation</option>
+                <select
+                  id="inputState"
+                  className="form-select"
+                  name="education"
+                  value={formik.values.education}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                >
+                  <option defaultValue value={null}>
+                    Choose...
+                  </option>
+                  <option value={'12th'}>12th</option>
+                  <option value={'Graduation'}>Graduation</option>
+                  <option value={'PostGraduation'}>PostGraduation</option>
                 </select>
+                {formik.errors.education && formik.touched.education ? (
+                  <p className="text-danger">{formik.errors.education}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="doc" className="form-label">
                   Date of Completion
                 </label>
-                <input type="date" className="form-control" id="doc" placeholder="Enter Name" />
+                <input
+                  type="date"
+                  className="form-control"
+                  id="doc"
+                  placeholder="Enter Name"
+                  name="degree_date"
+                  value={formik.values.degree_date}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.errors.degree_date && formik.touched.degree_date ? (
+                  <p className="text-danger">{formik.errors.degree_date}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="doc" className="form-label">
                   Upload Certificate
                 </label>
-                <input type="file" className="form-control" id="doc" placeholder="Enter Name" />
+                <input
+                  type="file"
+                  className="form-control"
+                  id="doc"
+                  placeholder="Enter Name"
+                  name="degrre_cert"
+                  onChange={(event) => {
+                    formik.setFieldValue('degrre_cert', event.currentTarget.files[0])
+                  }}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.errors.degrre_cert && formik.touched.degrre_cert ? (
+                  <p className="text-danger">{formik.errors.degrre_cert}</p>
+                ) : null}
               </div>
               <div className="col-12">
                 <h6>Work Experiance</h6>
@@ -254,10 +403,11 @@ const AddEmployee = () => {
                     <input
                       className="form-check-input"
                       type="radio"
-                      name="inlineRadioOptions1"
+                      name="experiance_type"
                       id="fresher"
-                      value="option1"
-                      defaultChecked
+                      value="Fresher"
+                      checked={formik.values.experiance_type === 'Fresher'}
+                      onChange={formik.handleChange}
                     />
                     <label className="form-check-label" htmlFor="fresher">
                       Fresher
@@ -267,9 +417,11 @@ const AddEmployee = () => {
                     <input
                       className="form-check-input"
                       type="radio"
-                      name="inlineRadioOptions1"
+                      name="experiance_type"
                       id="intwrn"
-                      value="option2"
+                      value="Intern"
+                      checked={formik.values.experiance_type === 'Intern'}
+                      onChange={formik.handleChange}
                     />
                     <label className="form-check-label" htmlFor="intwrn">
                       Intern
@@ -279,9 +431,11 @@ const AddEmployee = () => {
                     <input
                       className="form-check-input"
                       type="radio"
-                      name="inlineRadioOptions1"
+                      name="experiance_type"
                       id="experiance"
-                      value="option3"
+                      value="Experiance"
+                      checked={formik.values.experiance_type === 'Experiance'}
+                      onChange={formik.handleChange}
                     />
                     <label className="form-check-label" htmlFor="experiance">
                       Experiance
@@ -298,7 +452,14 @@ const AddEmployee = () => {
                   className="form-control"
                   id="mobile1"
                   placeholder="Enter Duration in Year"
+                  name="experiance_Duration"
+                  value={formik.values.experiance_Duration}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.experiance_Duration && formik.touched.experiance_Duration ? (
+                  <p className="text-danger">{formik.errors.experiance_Duration}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="preCompany" className="form-label">
@@ -309,13 +470,32 @@ const AddEmployee = () => {
                   className="form-control"
                   id="preCompany"
                   placeholder="Enter Organization Name"
+                  name="pre_org_name"
+                  value={formik.values.pre_org_name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.pre_org_name && formik.touched.pre_org_name ? (
+                  <p className="text-danger">{formik.errors.pre_org_name}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-4">
                 <label htmlFor="role" className="form-label">
                   Designation
                 </label>
-                <input type="text" className="form-control" id="role" placeholder="Enter Role" />
+                <input
+                  type="text"
+                  className="form-control"
+                  id="role"
+                  placeholder="Enter Role"
+                  name="pre_org_designation"
+                  value={formik.values.pre_org_designation}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.errors.pre_org_designation && formik.touched.pre_org_designation ? (
+                  <p className="text-danger">{formik.errors.pre_org_designation}</p>
+                ) : null}
               </div>
               <div className="mb-3 col-6">
                 <label htmlFor="perAdd" className="form-label">
@@ -326,13 +506,66 @@ const AddEmployee = () => {
                   className="form-control"
                   id="perAdd"
                   placeholder="Enter Address"
+                  name="pre_org_address"
+                  value={formik.values.pre_org_address}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
+                {formik.errors.pre_org_address && formik.touched.pre_org_address ? (
+                  <p className="text-danger">{formik.errors.pre_org_address}</p>
+                ) : null}
+              </div>
+              <div className="col-12">
+                <h6>Login Credentials</h6>
+              </div>
+              <div className="col-3 mb-3">
+                <label htmlFor="role" className="form-label">
+                  Employee Id
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="role"
+                  placeholder="Enter Role"
+                  name="emp_id"
+                  value={formik.values.emp_id || ''}
+                  disabled
+                />
+                {formik.errors.emp_id && formik.touched.emp_id ? (
+                  <p className="text-danger">{formik.errors.emp_id}</p>
+                ) : null}
+              </div>
+              <div className="col-2 mb-3">
+                <label htmlFor="role" className="form-label text-light">
+                  Employee Id
+                </label>
+                <button type="button" className="btn btn-outline-info" onClick={getEmployeeId}>
+                  Get Id
+                </button>
+              </div>
+              <div className="col-4 mb-3">
+                <label htmlFor="role" className="form-label">
+                  Password
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="role"
+                  placeholder="Enter Role"
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.errors.password && formik.touched.password ? (
+                  <p className="text-danger">{formik.errors.password}</p>
+                ) : null}
               </div>
             </div>
 
-            <CButton variant="outline" color="info" onClick={Formik.handleSubmit}>
+            <button className="btn btn-outline-info" type="submit">
               Submit
-            </CButton>
+            </button>
           </form>
         </div>
       </div>

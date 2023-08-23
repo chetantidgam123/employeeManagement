@@ -15,6 +15,12 @@ export const registerEmployeeSchema=yup.object({
     permanant_add:yup.string().min(2).max(200).required("Address is Required"),
     education:yup.string().min(2).max(30).required("Qualification Id is Required"),
     degree_date:yup.string().min(2).max(50).required("Date Required"),
+    degrre_cert:yup.mixed().test('fileSize', 'File size is too large', (value) => {
+      return value && value.size <= 10485760; // 10MB
+    }),
+    // .test('fileType', 'Unsupported file type', (value) => {
+    //   return value && ['image/jpeg', 'image/png','.pdf'].includes(value.type);
+    // }),
     experiance_type:yup.string().min(2).max(30).required("Expreiance Type Required"),
     experiance_Duration:yup.string().min(2).max(2,"Enter experiance in Years"),
     pre_org_name:yup.string().min(2).max(50),

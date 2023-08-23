@@ -11,6 +11,7 @@ const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const { logs } = require("../../../_middleware");
 const { json, QueryTypes } = require("sequelize");
+const { emp_id } = require("../../model/user/schema");
 
 const createUser1 =
   ({ userModel }, { config }) =>
@@ -105,7 +106,14 @@ const createUser =
         ],
         type: QueryTypes.INSERT,
       });
-
+      const insertIdQuery = `insert into public.max_emp_id (emp_id,emp_number) VALUES (?,?) RETURNING "emp_id"` 
+      const [maxId] = await db.sequelize.query(insertIdQuery, {
+        replacements: [
+          params.emp_id,
+          params.emp_id.split('-')[1]
+        ],
+        type:QueryTypes.INSERT
+      })
       return res.json({
         status: true,
         code: 200,
@@ -127,18 +135,18 @@ function registerSchema(req, res, next) {
     email_id: Joi.string().trim().email().required(),
     role: Joi.string(),
     emp_id: Joi.string().trim().min(3).max(20).required(),
-    gender: Joi.string().alphanum().trim().min(3).max(20).required(),
+    gender: Joi.string().trim().min(3).max(20).required(),
     dob: Joi.string().trim().min(3).max(50).required(),
-    marital_status: Joi.string().alphanum().trim().min(3).max(30).required(),
-    temp_add: Joi.string().alphanum().trim().min(3).max(200).required(),
-    permanant_add: Joi.string().alphanum().trim().min(3).max(200).required(),
-    education: Joi.string().alphanum().trim().min(3).max(30).required(),
+    marital_status: Joi.string().trim().min(3).max(30).required(),
+    temp_add: Joi.string().trim().min(3).max(200).required(),
+    permanant_add: Joi.string().trim().min(3).max(200).required(),
+    education: Joi.string().trim().min(3).max(30).required(),
     degree_date: Joi.string().trim().min(3).max(50).required(),
-    experiance_type: Joi.string().alphanum().trim().min(3).max(50).required(),
-    experiance_Duration: Joi.string().alphanum().trim().min(1) .max(3),
-    pre_org_name: Joi.string().alphanum().trim().min(3).max(50),
-    pre_org_address: Joi.string().alphanum().trim().min(3).max(200),
-    pre_org_designation: Joi.string().alphanum().trim().min(3).max(50),
+    experiance_type: Joi.string().trim().min(3).max(50).required(),
+    experiance_Duration: Joi.string().trim().min(1) .max(3),
+    pre_org_name: Joi.string().trim().min(3).max(50),
+    pre_org_address: Joi.string().trim().min(3).max(200),
+    pre_org_designation: Joi.string().trim().min(3).max(50),
   });
   validateRequest(req, next, schema);
 }
@@ -156,7 +164,7 @@ const login =
         throw "Incorrect Password";
       // authentication successful
       const token = jwt.sign(
-        { sub: user.emp_id, role: user.role },
+        { sub: user.id, role: user.role },
         configFile.secret,
         { expiresIn: "1d" }
       );
