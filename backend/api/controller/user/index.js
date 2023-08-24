@@ -3,8 +3,6 @@ const path = require('path');
 const { checkSqlInjection, authorize, authorizeAdmin } = require('../../../_middleware')
 const { createUser, registerSchema, login, loginSchema, } = require('./post')
 const { getUserById, getAllEmployee, getEmployeeId } = require('./get');
-const { update } = require('./put');
-const { _delete } = require('./delete');
 
 module.exports = (userModel, { config }) => {
     const router = config.express.Router();
@@ -33,8 +31,6 @@ module.exports = (userModel, { config }) => {
     router.post('/login', loginSchema, login(userModel, { config }));
     router.get('/getAllEmployee', authorize(), getAllEmployee(userModel, { config }));
     router.get('/getEmployeeId', authorize(), getEmployeeId(userModel, { config }));
-    router.get('/:id', checkSqlInjection(), authorize(), getUserById(userModel, { config }));
-    router.put('/:id', checkSqlInjection(), authorize(), update(userModel, { config }));
-    router.delete('/:id', checkSqlInjection(), authorizeAdmin(), _delete(userModel, { config }));
+    router.get('/getEmployeeById/:id', authorize(), getUserById(userModel, { config }));
     return router;
 };

@@ -15,7 +15,8 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { login } from 'src/Services/service'
+import { login} from 'src/Services/service'
+import { error_toast, success_toast } from 'src/Services/swalService'
 
 const Login = () => {
    const navigate = useNavigate()
@@ -41,32 +42,14 @@ const submitHandler = async () => {
                 if(result.data.code==200){
                     localStorage.setItem('token', JSON.stringify(result.data.token))
                     localStorage.setItem('role', JSON.stringify(result.data.data.role))
-                    // toast({
-                    //     title: "Login Successful",
-                    //     status: "success",
-                    //     duration: 2000,
-                    //     isClosable: true,
-                    //     position: "top-right"
-                    // })
                     navigate('/dashboard')
-                }else{
-                    // toast({
-                    //     title: result.data.message,
-                    //     status: "error",
-                    //     duration: 2000,
-                    //     isClosable: true,
-                    //     position: "top-right"
-                    // }) 
+                   success_toast(result.data.message)
+                  }else{
+                  error_toast(result.data.message)
                 }
-            })
-            .catch((err) => {
-                // toast({
-                //     title: err.message,
-                //     status: "error",
-                //     duration: 2000,
-                //     isClosable: true,
-                //     position: "top-right"
-                // }) 
+              })
+              .catch((err) => {
+                error_toast(err)
             })
     }
   return (

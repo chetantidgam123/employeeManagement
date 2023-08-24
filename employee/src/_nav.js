@@ -4,6 +4,7 @@ import {
   cilBell,
   cilCalculator,
   cilChartPie,
+  cilCloudUpload,
   cilCursor,
   cilDescription,
   cilDrop,
@@ -33,6 +34,13 @@ const _nav = [
     name: 'Employee List',
     to: '/emplist',
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
+    role:'employee'
+  },
+  {
+    component: CNavItem,
+    name: 'Upload Documents',
+    to: '/uploaddocs',
+    icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
     role:'employee'
   },
   {

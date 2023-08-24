@@ -9,10 +9,11 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getAllEmployee, getUserById } from 'src/Services/service'
+import { getCall, getUserById } from 'src/Services/service'
 import CIcon from '@coreui/icons-react'
 import { cilPencil } from '@coreui/icons'
 import { useNavigate } from 'react-router-dom'
+import { error_toast } from 'src/Services/swalService'
 const EmployeeList = () => {
   const navigate = useNavigate()
   const [empList, setempList] = useState([])
@@ -21,7 +22,7 @@ const EmployeeList = () => {
   }, [])
 
   const getAllEmployeeList = async () => {
-    await getAllEmployee()
+    await getCall('users/getAllEmployee',{})
       .then((result) => {
         if (result.data.code == 200) {
           setempList(result.data.data)
@@ -30,7 +31,7 @@ const EmployeeList = () => {
         }
       })
       .catch((err) => {
-        console.log(err)
+        error_toast(err)
       })
   }
   const handleChange = (e,ele)=>{
@@ -43,7 +44,7 @@ const EmployeeList = () => {
     setempList(a)
   }
     const getEmployeeById = async (id) => {
-    await getUserById(id)
+    await getCall('users/getEmployeeById/'+id,{})
       .then((result) => {
         if (result.data.code == 200) {
          console.log(result.data.data)
@@ -51,7 +52,7 @@ const EmployeeList = () => {
         }
       })
       .catch((err) => {
-        console.log(err)
+        error_toast(err.message)
       })
   }
   return (
@@ -90,7 +91,7 @@ const EmployeeList = () => {
                   <CTableDataCell>{ele.firstname + ' ' + ele.lastname}</CTableDataCell>
                   <CTableDataCell>{ele.email_id}</CTableDataCell>
                   <CTableDataCell>{ele.mobilenumber}</CTableDataCell>
-                  <CTableDataCell>
+                  <CTableDataCell className='d-flex align-items-center'>
                     <CButton color="info" className="" variant="outline">
                       <CIcon icon={cilPencil} />
                     </CButton>
