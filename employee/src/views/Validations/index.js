@@ -22,9 +22,11 @@ export const registerEmployeeSchema = yup.object({
   education: yup.string().min(2).max(30).required('Qualification Id is Required'),
   degree_date: yup.string().min(2).max(50).required('Date Required'),
   degrre_cert: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
   }),
   // .test('fileType', 'Unsupported file type', (value) => {
+  // if(!value) return true; 
   //   return value && ['image/jpeg', 'image/png','.pdf'].includes(value.type);
   // }),
   experiance_type: yup.string().min(2).max(30).required('Expreiance Type Required'),
@@ -37,33 +39,42 @@ export const registerEmployeeSchema = yup.object({
 
 export const uploadEmployeeDocSchema = yup.object({
   profilePhoto: yup.mixed().test('fileSize', 'File size is too large', (value) => {
-    return value && value.size <= 10485760 // 10MB
-  }),
+    if (!value) return true;
+    return value && value.size <= 10485760
+    // 10MB
+  }).nullable(),
   aadharNumber: yup.string().min(2).max(30).required('Aadhar Number is Required'),
   aadharDoc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
-  }),
+  }).nullable(),
   panNumber: yup.string().min(2).max(30).required('Aadhar Number is Required'),
   panDoc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
-  }),
+  }).nullable(),
   residentDoc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
-  }),
+  }).nullable(),
   educationDoc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
-  }),
+  }).nullable(),
   bankAccNumber: yup.string().min(2).max(30).required('Aadhar Number is Required'),
   ifscCode: yup.string().min(2).max(30).required('Aadhar Number is Required'),
   bankBranch: yup.string().min(2).max(30).required('Aadhar Number is Required'),
   bankName: yup.string().min(2).max(30).required('Aadhar Number is Required'),
   bankDoc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
-  }),
+  }).nullable(),
   expCerDoc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
-  }),
+  }).nullable(),
   salSlipDoc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
+    if (!value) return true;
     return value && value.size <= 10485760 // 10MB
-  }),
+  }).nullable(),
 })

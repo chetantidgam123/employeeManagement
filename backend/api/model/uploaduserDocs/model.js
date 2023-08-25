@@ -1,7 +1,7 @@
-const apiDetailsSchema = require('./schema')
-module.exports = apiDetailsModel;
+const uploadDocsSchema = require('./schema')
+module.exports = uploadDocsModel;
 
-function apiDetailsModel(sequelize) {
+function uploadDocsModel(sequelize) {
     const options = {
         defaultScope: {
             // exclude hash by default
@@ -12,5 +12,5 @@ function apiDetailsModel(sequelize) {
             withHash: { attributes: {}, }
         }
     };
-    return sequelize.define('TBL_APIDT', apiDetailsSchema, options);
+    return sequelize.define('employee_doc', uploadDocsSchema, options);
 }
