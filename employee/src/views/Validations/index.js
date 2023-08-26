@@ -78,3 +78,14 @@ export const uploadEmployeeDocSchema = yup.object({
     return value && value.size <= 10485760 // 10MB
   }).nullable(),
 })
+
+
+
+export const updateEmpProfileSchema = yup.object({
+  doj: yup.string().min(2).max(30).required('Date of Joining Required'),
+  salary: yup.string().min(2).max(30).required('Current Salary is Required'),
+  increse_sal: yup.string().min(2).max(30).required('Incresed Salary is Required'),
+  date_of_app: yup.string().min(2).max(30).required('Date of Appraisal is Required'),
+  designation: yup.string().min(2).max(30).required('Current designation is Required'),
+  prometed_desig: yup.string().min(2).max(30).required('Promoted Designation is Required'),
+})

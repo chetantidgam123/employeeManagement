@@ -305,7 +305,7 @@ const uploadUserDoc =
               ? req.files["salSlipDoc"][0].filename
               : users.salSlipDoc ? users.salSlipDoc : "";
 
-          const updateDocQuery = `UPDATE public."employee_docs" SET profile_photo=?,aadhar_number=?,aadhar_doc=?,pan_number=?,pan_doc=?,resident_doc=?,education_doc=?,bank_acc_number=?,ifsc_code=?,bank_branch=?,bank_name=?,bank_doc=?,exp_cer_doc=?,sal_slip_doc=? WHERE emp_id=?`;
+          const updateDocQuery = `UPDATE public."employee_docs" SET profile_photo=?,aadhar_number=?,aadhar_doc=?,pan_number=?,pan_doc=?,resident_doc=?,education_doc=?,bank_acc_number=?,ifsc_code=?,bank_branch=?,bank_name=?,bank_doc=?,exp_cer_doc=?,sal_slip_doc=?, updatedat=? WHERE emp_id=?`;
           const [rowOut] = await db.sequelize.query(updateDocQuery, {
             replacements: [
               params.profilePhoto,
@@ -322,7 +322,8 @@ const uploadUserDoc =
               params.bankDoc,
               params.expCerDoc,
               params.salSlipDoc,
-              req.user.emp_id
+              req.user.emp_id,
+              new Date()
             ],
             type: QueryTypes.UPDATE,
           });
@@ -333,9 +334,7 @@ const uploadUserDoc =
           });
         }
       } catch (err) {
-        console.log('====================================');
         console.log(err);
-        console.log('====================================');
         next(err);
       }
     };
@@ -359,7 +358,72 @@ function uploadUserDocSchema(req, res, next) {
   });
   validateRequest(req, next, docsschema);
 }
+const updateProfileEmployee =
+  ({ userModel }, { config }) =>
+    async (req, res, next) => {
+      const params = req.body;
+      try {
+        const findemp = `select emp_id from public."employee_profiles" where emp_id =?`;
+        const employee = await db.sequelize.query(findemp, {
+          replacements: [params.emp_id],
+          type: QueryTypes.SELECT,
+        });
+        if (!employee || employee.length == 0) {
+          const insertempQuery = `INSERT INTO public."employee_profiles"(emp_id,doj,salary,increse_sal,date_of_app,designation,prometed_desig) VALUES (?, ?, ?, ?, ?, ?, ?)
+            RETURNING "emp_id"`;
+          const [rowOut] = await db.sequelize.query(insertempQuery, {
+            replacements: [
+              params.emp_id,
+              params.doj,
+              params.salary,
+              params.increse_sal,
+              params.date_of_app,
+              params.designation,
+              params.prometed_desig,
+            ],
+            type: QueryTypes.INSERT,
+          });
+          return res.json({
+            status: true,
+            code: 200,
+            message: "Employee Details Updated Successfully!",
+          });
+        } else {
+          const updateQuery = `UPDATE public."employee_docs" SET doj,salary=?,increse_sal=?,date_of_app=?,designation=?,prometed_desig=?`;
+          const [rowOut] = await db.sequelize.query(updateQuery, {
+            replacements: [
+              params.doj,
+              params.salary,
+              params.increse_sal,
+              params.date_of_app,
+              params.designation,
+              params.prometed_desig,
+            ],
+            type: QueryTypes.INSERT,
+          });
+          return res.json({
+            status: true,
+            code: 200,
+            message: "Employee Details Updated Successfully!",
+          });
+        }
+      } catch (err) {
+        next(err);
+      }
+    };
 
+function updateProfileEmployeeSchema(req, res, next) {
+  const schema = Joi.object({
+    emp_id: Joi.string().trim().min(3).max(30).required(),
+    doj: Joi.string().trim().max(50).required(),
+    salary: Joi.string().trim().min(4).max(10).required(),
+    increse_sal: Joi.string().trim().min(4).max(10).required(),
+    date_of_app: Joi.string().trim().max(50),
+    designation: Joi.string().trim().min(4).max(200).required(),
+    prometed_desig: Joi.string().trim().min(4).max(200),
+  });
+  validateRequest(req, next, schema);
+}
 module.exports = {
   createUser,
   registerSchema,
@@ -367,4 +431,6 @@ module.exports = {
   loginSchema,
   uploadUserDoc,
   uploadUserDocSchema,
+  updateProfileEmployee,
+  updateProfileEmployeeSchema
 };

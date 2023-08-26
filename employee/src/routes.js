@@ -4,6 +4,7 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const EmployeeList = React.lazy(() => import('./views/adminPages/EmployeeList'))
 const AddEmployee = React.lazy(() => import('./views/adminPages/AddEmployee'))
 const Uploaddocs = React.lazy(() => import('./views/employeePages/UploadDoc'))
+const UpdateProfile = React.lazy(() => import('./views/adminPages/UpdateProfile'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -59,6 +60,8 @@ const routes = [
   { path: '/emplist', name: 'Employee List', element: EmployeeList },
   { path: '/addEmployee', name: 'Add Employee', element: AddEmployee },
   { path: '/uploaddocs', name: 'Upload Documents', element: Uploaddocs },
+  { path: '/update_profile', name: 'Update Profile', element: UpdateProfile },
+  { path: '/update_profile/:id', name: 'Update Profile', element: UpdateProfile },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

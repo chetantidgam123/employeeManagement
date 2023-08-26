@@ -27,21 +27,28 @@ const _nav = [
       color: 'info',
       text: 'NEW',
     },
-    role:'employee'
+    role: 'employee'
   },
   {
     component: CNavItem,
     name: 'Employee List',
     to: '/emplist',
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
-    role:'employee'
+    role: 'employee'
   },
   {
     component: CNavItem,
     name: 'Upload Documents',
     to: '/uploaddocs',
     icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
-    role:'employee'
+    role: 'employee'
+  },
+  {
+    component: CNavItem,
+    name: 'Update Employee Profile',
+    to: '/update_profile',
+    icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
+    role: 'employee'
   },
   {
     component: CNavTitle,
@@ -52,14 +59,14 @@ const _nav = [
     name: 'Colors',
     to: '/theme/colors',
     icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
-    role:'employee'
+    role: 'employee'
   },
   {
     component: CNavItem,
     name: 'Typography',
     to: '/theme/typography',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
-    role:'admin'
+    role: 'admin'
   },
   {
     component: CNavTitle,
