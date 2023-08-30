@@ -322,8 +322,8 @@ const uploadUserDoc =
               params.bankDoc,
               params.expCerDoc,
               params.salSlipDoc,
-              req.user.emp_id,
-              new Date()
+              new Date(),
+              req.user.emp_id
             ],
             type: QueryTypes.UPDATE,
           });

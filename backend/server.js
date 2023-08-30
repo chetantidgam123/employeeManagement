@@ -3,6 +3,8 @@ require("dotenv").config()
 const express = require('express');
 // const  logger  = require('')
 const app = express();
+const path = require('path');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const logger = require('./logger')
 const db = require('./_helpers/db')
@@ -13,8 +15,10 @@ const { connect } = require('./_helpers/mongodb');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
 db;
-
+// app.use(bodyParser.urlencoded({ limit: '50mb', extended: false })); // PARSE application/x-www-form-urlencoded
+// app.use(bodyParser.json({ limit: '50mb' })); // PARSE application/json
 // Use morgan middleware with the custom format
 // api routes
 // app.use(checkSqlInjection());

@@ -2,19 +2,25 @@ const multer = require('multer');
 const path = require('path');
 const { authorize, authorizeAdmin } = require('../../../_middleware')
 const { createUser, registerSchema, login, loginSchema, uploadUserDoc, uploadUserDocSchema, updateProfileEmployeeSchema, updateProfileEmployee, } = require('./post')
-const { getUserById, getAllEmployee, getEmployeeId } = require('./get');
+const { getUserById, getAllEmployee, getEmployeeId, getProfile } = require('./get');
+const { log } = require('winston');
 
 module.exports = (userModel, { config }) => {
     const router = config.express.Router();
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'uploads/');
-        },
-        filename: function (req, file, cb) {
+    const
+        storage = multer.diskStorage({
+            destination: function (req, file, cb) {
+                if (file.fieldname == 'profilePhoto') {
+                    cb(null, 'uploads/profilepics');
+                } else {
+                    cb(null, 'uploads/');
+                }
+            },
+            filename: function (req, file, cb) {
 
-            cb(null, Date.now() + path.extname(file.originalname));
-        },
-    });
+                cb(null, Date.now() + path.extname(file.originalname));
+            },
+        });
     function fileFilter(req, file, cb) {
         const allowedExtensions = ['.jpeg', '.jpg', '.png', '.yaml', '.json', '.pdf'];
 
@@ -34,5 +40,6 @@ module.exports = (userModel, { config }) => {
     router.get('/getAllEmployee', authorize(), getAllEmployee(userModel, { config }));
     router.get('/getEmployeeId', authorize(), getEmployeeId(userModel, { config }));
     router.get('/getEmployeeById/:id', authorize(), getUserById(userModel, { config }));
+    router.get('/getEmployeeProfile', authorize(), getProfile(userModel, { config }));
     return router;
 };

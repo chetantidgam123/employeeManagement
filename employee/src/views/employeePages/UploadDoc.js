@@ -25,7 +25,7 @@ const UploadDoc = () => {
       expCerDoc: null,
       salSlipDoc: null,
     },
-    validationSchema: uploadEmployeeDocSchema,
+    // validationSchema: uploadEmployeeDocSchema,
     onSubmit: (values) => {
       uploadDocs(values)
     },
@@ -46,6 +46,11 @@ const UploadDoc = () => {
       .then((result) => {
         if (result.data.code == 200) {
           formik.resetForm()
+          let a = ['profilePhoto', 'aadharDoc', 'panDoc', 'residentDoc', 'educationDoc', 'bankDoc', 'expCerDoc', 'salSlipDoc']
+          for (let i = 0; i < a.length; i++) {
+            let ip = document.getElementById(a[i])
+            ip.value = ''
+          }
           success_toast(result.data.message)
           // navigate('/emplist')
         } else {
@@ -68,7 +73,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="profilePhoto"
               placeholder="Enter Name"
               name="profilePhoto"
               onChange={(event) => {
@@ -87,7 +92,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="aadharDoc"
               placeholder="Enter Name"
               name="aadharDoc"
               onChange={(event) => {
@@ -124,7 +129,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="panDoc"
               placeholder="Enter Name"
               name="panDoc"
               onChange={(event) => {
@@ -161,7 +166,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="residentDoc"
               placeholder="Enter Name"
               name="residentDoc"
               onChange={(event) => {
@@ -180,7 +185,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="educationDoc"
               placeholder="Enter Name"
               name="educationDoc"
               onChange={(event) => {
@@ -199,7 +204,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="bankDoc"
               placeholder="Enter Name"
               name="bankDoc"
               onChange={(event) => {
@@ -290,7 +295,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="expCerDoc"
               placeholder="Enter Name"
               name="expCerDoc"
               onChange={(event) => {
@@ -309,7 +314,7 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="doc"
+              id="salSlipDoc"
               placeholder="Enter Name"
               name="salSlipDoc"
               onChange={(event) => {
