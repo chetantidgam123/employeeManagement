@@ -28,6 +28,7 @@ const _nav = [
       text: 'NEW',
     },
     role: ''
+
   },
   {
     component: CNavItem,
