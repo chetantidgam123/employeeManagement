@@ -19,6 +19,7 @@ import {
   cilSettings,
   cilTask,
   cilUser,
+  cilAccountLogout,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
@@ -66,6 +67,13 @@ const AppHeaderDropdown = () => {
         <CDropdownItem style={{ cursor: 'pointer' }} onClick={() => { navigate('/profile') }}>
           <CIcon icon={cilUser} className="me-2" />
           Profile
+        </CDropdownItem>
+        <CDropdownItem style={{ cursor: 'pointer' }} onClick={() => {
+          localStorage.clear();
+          navigate('/login')
+        }}>
+          <CIcon icon={cilAccountLogout} className="me-2" />
+          LogOut
         </CDropdownItem>
         <CDropdownItem  >
           <CIcon icon={cilSettings} className="me-2" />

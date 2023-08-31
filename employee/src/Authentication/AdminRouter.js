@@ -5,12 +5,10 @@ import { AuthState } from '../Context/AuthProvider'
 
 const AdminRouter = ({ children }) => {
     const { user } = AuthState()
-    if (!user) {
-        return <Navigate to="/login" />
-    } else if (user?.role == 'admin') {
+    if (user && user?.role == 'admin') {
         return children
-    }
-    return
+    } else
+        return <Navigate to="/login" />
 }
 
 export default AdminRouter

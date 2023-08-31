@@ -4,8 +4,10 @@ import { updateEmpProfileSchema } from '../Validations'
 import { getCall, postCall } from 'src/Services/service'
 import { error_toast, success_toast } from 'src/Services/swalService'
 import { useNavigate, useParams } from 'react-router-dom'
+import { AuthState } from 'src/Context/AuthProvider'
 const UpdateProfile = () => {
     const params = useParams()
+    const { user } = AuthState()
     const [employee, setEmployee] = useState({
         firstname: '',
         middlename: '',
@@ -50,10 +52,11 @@ const UpdateProfile = () => {
             })
     }
     const getEmployeeDetailsById = async () => {
-        await getCall('users/getEmployeeById/' + params.id)
+        await getCall('users/getupdateProfile/' + params.id)
             .then((result) => {
                 if (result.data.code == 200) {
                     setEmployee(result.data.data[0])
+                    formik.setValues(result.data.data[0])
                 } else {
                 }
             })

@@ -20,8 +20,16 @@ const getUserById = ({ userModel }, { config }) => async (req, res, next) => {
     }
 }
 const getAllEmployee = ({ userModel }, { config }) => async (req, res, next) => {
+    // try {
+    //     const users = await db.sequelize.query(`SELECT id ,emp_id,firstname,lastname,email_id,mobilenumber,is_active FROM public."EMPLOYEEs" where role='employee' ORDER BY id DESC`, { type: QueryTypes.SELECT });
+    //     if (!users || users.length == 0) throw 'User not found';
+    //     return res.json({ status: true, code: 200, message: "", data: users });
+    // } catch (error) {
+    //     next(error)
+    // }
     try {
-        const users = await db.sequelize.query(`SELECT id ,emp_id,firstname,lastname,email_id,mobilenumber,is_active FROM public."EMPLOYEEs" where role='employee'`, { type: QueryTypes.SELECT });
+        const users = await db.sequelize.query(`SELECT emp.id,emp.emp_id,emp.firstname,emp.lastname,emp.email_id,emp.mobilenumber,emp.is_active ,ep.emp_id as is_profile FROM public."EMPLOYEEs"
+as emp left join public.employee_profiles as ep on ep.emp_id=emp.emp_id where role ='employee' ORDER BY emp.id DESC`, { type: QueryTypes.SELECT });
         if (!users || users.length == 0) throw 'User not found';
         return res.json({ status: true, code: 200, message: "", data: users });
     } catch (error) {
@@ -48,14 +56,40 @@ const getProfile = ({ userModel }, { config }) => async (req, res, next) => {
             type: QueryTypes.SELECT,
         });
         if (!user || user.length == 0) throw 'User not found';
-        console.log('====================================');
-        console.log(req);
-        console.log('====================================');
-        user[0].profile_photo = req + '/uploads' + user[0].profile_photo
+        return res.json({ status: true, code: 200, message: "", data: user });
+    } catch (error) {
+        next(error)
+    }
+}
+const getupdateProfile = ({ userModel }, { config }) => async (req, res, next) => {
+    // let usermodel = userModel(db.sequelize)
+    try {
+        const { id } = req.params
+        const finduserQuery = `select emp.emp_id, emp.firstname, emp.middlename, emp.lastname, emp.email_id, emp.gender, ep.designation, ep.doj, ep.salary, ep.increse_sal, ep.date_of_app, ep.designation, ep.prometed_desig from public."EMPLOYEEs" as emp left join public.employee_profiles as ep on ep.emp_id = emp.emp_id where emp.id = ?`;
+        const user = await db.sequelize.query(finduserQuery, {
+            replacements: [id],
+            type: QueryTypes.SELECT,
+        });
+        if (!user || user.length == 0) throw 'User not found';
+        return res.json({ status: true, code: 200, message: "", data: user });
+    } catch (error) {
+        next(error)
+    }
+}
+const getUserDocs = ({ userModel }, { config }) => async (req, res, next) => {
+    // let usermodel = userModel(db.sequelize)
+    try {
+        const { emp_id } = req.user
+        const finduserQuery = `select emp_id,profile_photo,aadhar_number,aadhar_doc,pan_number,pan_doc,resident_doc,education_doc,bank_acc_number,ifsc_code,bank_branch,bank_name,bank_doc,exp_cer_doc,sal_slip_doc from public."employee_docs" where emp_id =?`;
+        const user = await db.sequelize.query(finduserQuery, {
+            replacements: [emp_id],
+            type: QueryTypes.SELECT,
+        });
+        if (!user || user.length == 0) throw 'User not found';
         return res.json({ status: true, code: 200, message: "", data: user });
     } catch (error) {
         next(error)
     }
 }
 
-module.exports = { getUserById, getAllEmployee, getEmployeeId, getProfile }
+module.exports = { getUserById, getAllEmployee, getEmployeeId, getProfile, getUserDocs, getupdateProfile }

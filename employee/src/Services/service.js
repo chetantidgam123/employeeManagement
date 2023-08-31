@@ -1,5 +1,6 @@
 import axios from 'axios'
 const Url = 'http://localhost:4000/api/v1/uat/'
+const imgUrl = 'http://localhost:4000/'
 // const Url = "https://ecomservice.onrender.com/"
 var token = JSON.parse(localStorage.getItem('token')) || ''
 
@@ -22,10 +23,10 @@ function registration(body) {
     },
   })
 }
-function uploadsPost(url,body) {
+function uploadsPost(url, body) {
   return axios({
     method: 'post',
-    url: Url +url,
+    url: Url + url,
     data: body,
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -34,24 +35,24 @@ function uploadsPost(url,body) {
   })
 }
 
-function postCall(url,body){
-   return axios({
+function postCall(url, body) {
+  return axios({
     method: 'post',
     url: Url + url,
     data: body,
     headers: {
-       "Content-type": "application/json",
+      "Content-type": "application/json",
       Authorization: `Bearer ${JSON.parse(localStorage.getItem('token')) || ''}`,
     },
   })
 }
-function getCall(url,body){
-   return axios({
+function getCall(url, body) {
+  return axios({
     method: 'get',
     url: Url + url,
     data: body,
     headers: {
-       "Content-type": "application/json",
+      "Content-type": "application/json",
       Authorization: `Bearer ${JSON.parse(localStorage.getItem('token')) || ''}`,
     },
   })
@@ -63,7 +64,7 @@ function EmployeeId() {
   return axios.get(Url + 'users/getEmployeeId', config)
 }
 function getUserById(id) {
-  return axios.get(Url + 'users/getUserById'+id, config)
+  return axios.get(Url + 'users/getUserById' + id, config)
 }
 
-export { registration, login, EmployeeId,getUserById,postCall,getCall,uploadsPost }
+export { registration, login, EmployeeId, getUserById, postCall, getCall, uploadsPost, imgUrl }

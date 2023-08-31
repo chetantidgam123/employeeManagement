@@ -150,10 +150,10 @@ function registerSchema(req, res, next) {
     education: Joi.string().trim().min(3).max(30).required(),
     degree_date: Joi.string().trim().min(3).max(50).required(),
     experiance_type: Joi.string().trim().min(3).max(50).required(),
-    experiance_Duration: Joi.string().trim().min(1).max(3),
-    pre_org_name: Joi.string().trim().min(3).max(50),
-    pre_org_address: Joi.string().trim().min(3).max(200),
-    pre_org_designation: Joi.string().trim().min(3).max(50),
+    experiance_Duration: Joi.string().trim().min(1).max(3).allow(''),
+    pre_org_name: Joi.string().trim().min(3).max(50).allow(''),
+    pre_org_address: Joi.string().trim().min(3).max(200).allow(''),
+    pre_org_designation: Joi.string().trim().min(3).max(50).allow(''),
   });
   validateRequest(req, next, schema);
 }
@@ -197,7 +197,7 @@ function loginSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 const uploadUserDoc =
-  ({ uploadDocsModel }, { config }) =>
+  ({ upload_docsModel }, { config }) =>
     async (req, res, next) => {
       const params = req.body;
       try {
@@ -211,117 +211,117 @@ const uploadUserDoc =
         );
         if (!users || users.length == 0) {
           params.emp_id = req.user.emp_id;
-          params.profilePhoto =
-            req.files["profilePhoto"] && req.files["profilePhoto"].length > 0
-              ? req.files["profilePhoto"][0].filename
+          params.profile_photo =
+            req.files["profile_photo"] && req.files["profile_photo"].length > 0
+              ? req.files["profile_photo"][0].filename
               : "";
-          params.aadharDoc =
-            req.files["aadharDoc"] && req.files["aadharDoc"].length > 0
-              ? req.files["aadharDoc"][0].filename
+          params.aadhar_doc =
+            req.files["aadhar_doc"] && req.files["aadhar_doc"].length > 0
+              ? req.files["aadhar_doc"][0].filename
               : "";
-          params.panDoc =
-            req.files["panDoc"] && req.files["panDoc"].length > 0
-              ? req.files["panDoc"][0].filename
+          params.pan_doc =
+            req.files["pan_doc"] && req.files["pan_doc"].length > 0
+              ? req.files["pan_doc"][0].filename
               : "";
-          params.residentDoc =
-            req.files["residentDoc"] && req.files["residentDoc"].length > 0
-              ? req.files["residentDoc"][0].filename
+          params.resident_doc =
+            req.files["resident_doc"] && req.files["resident_doc"].length > 0
+              ? req.files["resident_doc"][0].filename
               : "";
-          params.bankDoc =
-            req.files["bankDoc"] && req.files["bankDoc"].length > 0
-              ? req.files["bankDoc"][0].filename
+          params.bank_doc =
+            req.files["bank_doc"] && req.files["bank_doc"].length > 0
+              ? req.files["bank_doc"][0].filename
               : "";
-          params.educationDoc =
-            req.files["educationDoc"] && req.files["educationDoc"].length > 0
-              ? req.files["educationDoc"][0].filename
+          params.education_doc =
+            req.files["education_doc"] && req.files["education_doc"].length > 0
+              ? req.files["education_doc"][0].filename
               : "";
-          params.expCerDoc =
-            req.files["expCerDoc"] && req.files["expCerDoc"].length > 0
-              ? req.files["expCerDoc"][0].filename
+          params.exp_cer_doc =
+            req.files["exp_cer_doc"] && req.files["exp_cer_doc"].length > 0
+              ? req.files["exp_cer_doc"][0].filename
               : "";
-          params.salSlipDoc =
-            req.files["salSlipDoc"] && req.files["salSlipDoc"].length > 0
-              ? req.files["salSlipDoc"][0].filename
+          params.sal_slip_doc =
+            req.files["sal_slip_doc"] && req.files["sal_slip_doc"].length > 0
+              ? req.files["sal_slip_doc"][0].filename
               : "";
 
-          const insertDocQuery = `INSERT INTO public."employee_docs"(emp_id,profile_photo,aadhar_number,aadhar_doc,pan_number,pan_doc,resident_doc,education_doc,bank_acc_number,ifsc_code,bank_branch,bank_name,bank_doc,exp_cer_doc,sal_slip_doc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          const insert_docQuery = `INSERT INTO public."employee_docs"(emp_id,profile_photo,aadhar_number,aadhar_doc,pan_number,pan_doc,resident_doc,education_doc,bank_acc_number,ifsc_code,bank_branch,bank_name,bank_doc,exp_cer_doc,sal_slip_doc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             RETURNING "emp_id"`;
-          const [rowOut] = await db.sequelize.query(insertDocQuery, {
+          const [rowOut] = await db.sequelize.query(insert_docQuery, {
             replacements: [
               params.emp_id,
-              params.profilePhoto,
-              params.aadharNumber,
-              params.aadharDoc,
-              params.panNumber,
-              params.panDoc,
-              params.residentDoc,
-              params.educationDoc,
-              params.bankAccNumber,
-              params.ifscCode,
-              params.bankBranch,
-              params.bankName,
-              params.bankDoc,
-              params.expCerDoc,
-              params.salSlipDoc,
+              params.profile_photo,
+              params.aadhar_number,
+              params.aadhar_doc,
+              params.pan_number,
+              params.pan_doc,
+              params.resident_doc,
+              params.education_doc,
+              params.bank_acc_number,
+              params.ifsc_code,
+              params.bank_branch,
+              params.bank_name,
+              params.bank_doc,
+              params.exp_cer_doc,
+              params.sal_slip_doc,
             ],
             type: QueryTypes.INSERT,
           });
           return res.json({
             status: true,
             code: 200,
-            message: "Documents Uploaded Successfully!",
+            message: "_documents Uploaded Successfully!",
           });
         } else {
-          params.profilePhoto =
-            req.files["profilePhoto"] && req.files["profilePhoto"].length > 0
-              ? req.files["profilePhoto"][0].filename
-              : users.profilePhoto ? users.profilePhoto : "";
-          params.aadharDoc =
-            req.files["aadharDoc"] && req.files["aadharDoc"].length > 0
-              ? req.files["aadharDoc"][0].filename
-              : users.aadharDoc ? users.aadharDoc : "";
-          params.panDoc =
-            req.files["panDoc"] && req.files["panDoc"].length > 0
-              ? req.files["panDoc"][0].filename
-              : users.panDoc ? users.panDoc : "";
-          params.residentDoc =
-            req.files["residentDoc"] && req.files["residentDoc"].length > 0
-              ? req.files["residentDoc"][0].filename
-              : users.residentDoc ? users.residentDoc : "";
-          params.bankDoc =
-            req.files["bankDoc"] && req.files["bankDoc"].length > 0
-              ? req.files["bankDoc"][0].filename
-              : users.bankDoc ? users.bankDoc : "";
-          params.educationDoc =
-            req.files["educationDoc"] && req.files["educationDoc"].length > 0
-              ? req.files["educationDoc"][0].filename
-              : users.educationDoc ? users.educationDoc : "";
-          params.expCerDoc =
-            req.files["expCerDoc"] && req.files["expCerDoc"].length > 0
-              ? req.files["expCerDoc"][0].filename
-              : users.expCerDoc ? users.expCerDoc : "";
-          params.salSlipDoc =
-            req.files["salSlipDoc"] && req.files["salSlipDoc"].length > 0
-              ? req.files["salSlipDoc"][0].filename
-              : users.salSlipDoc ? users.salSlipDoc : "";
+          params.profile_photo =
+            req.files["profile_photo"] && req.files["profile_photo"].length > 0
+              ? req.files["profile_photo"][0].filename
+              : users.profile_photo ? users.profile_photo : "";
+          params.aadhar_doc =
+            req.files["aadhar_doc"] && req.files["aadhar_doc"].length > 0
+              ? req.files["aadhar_doc"][0].filename
+              : users.aadhar_doc ? users.aadhar_doc : "";
+          params.pan_doc =
+            req.files["pan_doc"] && req.files["pan_doc"].length > 0
+              ? req.files["pan_doc"][0].filename
+              : users.pan_doc ? users.pan_doc : "";
+          params.resident_doc =
+            req.files["resident_doc"] && req.files["resident_doc"].length > 0
+              ? req.files["resident_doc"][0].filename
+              : users.resident_doc ? users.resident_doc : "";
+          params.bank_doc =
+            req.files["bank_doc"] && req.files["bank_doc"].length > 0
+              ? req.files["bank_doc"][0].filename
+              : users.bank_doc ? users.bank_doc : "";
+          params.education_doc =
+            req.files["education_doc"] && req.files["education_doc"].length > 0
+              ? req.files["education_doc"][0].filename
+              : users.education_doc ? users.education_doc : "";
+          params.exp_cer_doc =
+            req.files["exp_cer_doc"] && req.files["exp_cer_doc"].length > 0
+              ? req.files["exp_cer_doc"][0].filename
+              : users.exp_cer_doc ? users.exp_cer_doc : "";
+          params.sal_slip_doc =
+            req.files["sal_slip_doc"] && req.files["sal_slip_doc"].length > 0
+              ? req.files["sal_slip_doc"][0].filename
+              : users.sal_slip_doc ? users.sal_slip_doc : "";
 
-          const updateDocQuery = `UPDATE public."employee_docs" SET profile_photo=?,aadhar_number=?,aadhar_doc=?,pan_number=?,pan_doc=?,resident_doc=?,education_doc=?,bank_acc_number=?,ifsc_code=?,bank_branch=?,bank_name=?,bank_doc=?,exp_cer_doc=?,sal_slip_doc=?, updatedat=? WHERE emp_id=?`;
-          const [rowOut] = await db.sequelize.query(updateDocQuery, {
+          const update_docQuery = `UPDATE public."employee_docs" SET profile_photo=?,aadhar_number=?,aadhar_doc=?,pan_number=?,pan_doc=?,resident_doc=?,education_doc=?,bank_acc_number=?,ifsc_code=?,bank_branch=?,bank_name=?,bank_doc=?,exp_cer_doc=?,sal_slip_doc=?, updatedat=? WHERE emp_id=?`;
+          const [rowOut] = await db.sequelize.query(update_docQuery, {
             replacements: [
-              params.profilePhoto,
-              params.aadharNumber,
-              params.aadharDoc,
-              params.panNumber,
-              params.panDoc,
-              params.residentDoc,
-              params.educationDoc,
-              params.bankAccNumber,
-              params.ifscCode,
-              params.bankBranch,
-              params.bankName,
-              params.bankDoc,
-              params.expCerDoc,
-              params.salSlipDoc,
+              params.profile_photo,
+              params.aadhar_number,
+              params.aadhar_doc,
+              params.pan_number,
+              params.pan_doc,
+              params.resident_doc,
+              params.education_doc,
+              params.bank_acc_number,
+              params.ifsc_code,
+              params.bank_branch,
+              params.bank_name,
+              params.bank_doc,
+              params.exp_cer_doc,
+              params.sal_slip_doc,
               new Date(),
               req.user.emp_id
             ],
@@ -330,7 +330,7 @@ const uploadUserDoc =
           return res.json({
             status: true,
             code: 200,
-            message: "Documents Updated Successfully!",
+            message: "_documents Updated Successfully!",
           });
         }
       } catch (err) {
@@ -341,20 +341,20 @@ const uploadUserDoc =
 
 function uploadUserDocSchema(req, res, next) {
   const docsschema = Joi.object({
-    profilePhoto: Joi.string().trim().min(3).max(50),
-    aadharNumber: Joi.string().trim().min(3).max(50).required(),
-    aadharDoc: Joi.string().trim().min(3).max(50),
-    panNumber: Joi.string().trim().min(3).max(50).required(),
-    panDoc: Joi.string().trim().min(3).max(50),
-    residentDoc: Joi.string().trim().min(3).max(50),
-    educationDoc: Joi.string().trim().min(3).max(50),
-    bankAccNumber: Joi.string().trim().min(3).max(50).required(),
-    ifscCode: Joi.string().trim().min(3).max(50).required(),
-    bankBranch: Joi.string().trim().min(3).max(50).required(),
-    bankName: Joi.string().trim().min(3).max(50).required(),
-    bankDoc: Joi.string().trim().min(3).max(50),
-    expCerDoc: Joi.string().trim().min(3).max(50),
-    salSlipDoc: Joi.string().trim().min(3).max(50),
+    profile_photo: Joi.string().trim().min(3).max(50),
+    aadhar_number: Joi.string().trim().min(3).max(50).required(),
+    aadhar_doc: Joi.string().trim().min(3).max(50),
+    pan_number: Joi.string().trim().min(3).max(50).required(),
+    pan_doc: Joi.string().trim().min(3).max(50),
+    resident_doc: Joi.string().trim().min(3).max(50),
+    education_doc: Joi.string().trim().min(3).max(50),
+    bank_acc_number: Joi.string().trim().min(3).max(50).required(),
+    ifsc_code: Joi.string().trim().min(3).max(50).required(),
+    bank_branch: Joi.string().trim().min(3).max(50).required(),
+    bank_name: Joi.string().trim().min(3).max(50).required(),
+    bank_doc: Joi.string().trim().min(3).max(50),
+    exp_cer_doc: Joi.string().trim().min(3).max(50),
+    sal_slip_doc: Joi.string().trim().min(3).max(50),
   });
   validateRequest(req, next, docsschema);
 }

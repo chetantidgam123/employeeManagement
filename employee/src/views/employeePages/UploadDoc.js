@@ -4,36 +4,57 @@ import React, { useEffect } from 'react'
 import { uploadEmployeeDocSchema } from '../Validations'
 import { error_toast, success_toast } from 'src/Services/swalService'
 import { useNavigate } from 'react-router-dom'
-import { uploadsPost } from 'src/Services/service'
+import { getCall, uploadsPost } from 'src/Services/service'
 
 const UploadDoc = () => {
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
-      profilePhoto: null,
-      aadharNumber: '',
-      aadharDoc: null,
-      panNumber: '',
-      panDoc: null,
-      residentDoc: null,
-      educationDoc: null,
-      bankAccNumber: '',
-      ifscCode: '',
-      bankBranch: '',
-      bankName: '',
-      bankDoc: null,
-      expCerDoc: null,
-      salSlipDoc: null,
+      profile_photo: null,
+      aadhar_number: '',
+      aadhar_doc: null,
+      pan_number: '',
+      pan_doc: null,
+      resident_doc: null,
+      education_doc: null,
+      bank_acc_number: '',
+      ifsc_code: '',
+      bank_branch: '',
+      bank_name: '',
+      bank_doc: null,
+      exp_cer_doc: null,
+      sal_slip_doc: null,
     },
-    // validationSchema: uploadEmployeeDocSchema,
+    validationSchema: uploadEmployeeDocSchema,
     onSubmit: (values) => {
       uploadDocs(values)
     },
   })
 
   useEffect(() => {
-
+    getUserDocs()
   }, [])
+
+  const getUserDocs = () => {
+    getCall('users/getUserDocs').then((result) => {
+      if (result.data.code == 200) {
+        if (result.data.data[0]) {
+          formik.setValues(result.data.data[0])
+          let a = ['profile_photo', 'aadhar_doc', 'pan_doc', 'resident_doc', 'education_doc', 'bank_doc', 'exp_cer_doc', 'sal_slip_doc']
+          for (let i = 0; i < a.length; i++) {
+            let ip = document.getElementById(a[i])
+            // ip.value = result.data.data[0]?.a[i]
+            // console.log(ip);
+          }
+
+        }
+      } else {
+      }
+    })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
   const uploadDocs = async (values) => {
     const formdata = new FormData()
@@ -46,7 +67,7 @@ const UploadDoc = () => {
       .then((result) => {
         if (result.data.code == 200) {
           formik.resetForm()
-          let a = ['profilePhoto', 'aadharDoc', 'panDoc', 'residentDoc', 'educationDoc', 'bankDoc', 'expCerDoc', 'salSlipDoc']
+          let a = ['profile_photo', 'aadhar_doc', 'pan_doc', 'resident_doc', 'education_doc', 'bank_doc', 'exp_cer_doc', 'sal_slip_doc']
           for (let i = 0; i < a.length; i++) {
             let ip = document.getElementById(a[i])
             ip.value = ''
@@ -73,16 +94,17 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="profilePhoto"
+              id="profile_photo"
               placeholder="Enter Name"
-              name="profilePhoto"
+              name="profile_photo"
               onChange={(event) => {
-                formik.setFieldValue('profilePhoto', event.currentTarget.files[0])
+                formik.setFieldValue('profile_photo', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.profilePhoto && formik.touched.profilePhoto ? (
-              <p className="text-danger">{formik.errors.profilePhoto}</p>
+            <i className='fa fa-eye'></i>
+            {formik.errors.profile_photo && formik.touched.profile_photo ? (
+              <p className="text-danger">{formik.errors.profile_photo}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -92,16 +114,16 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="aadharDoc"
+              id="aadhar_doc"
               placeholder="Enter Name"
-              name="aadharDoc"
+              name="aadhar_doc"
               onChange={(event) => {
-                formik.setFieldValue('aadharDoc', event.currentTarget.files[0])
+                formik.setFieldValue('aadhar_doc', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.aadharDoc && formik.touched.aadharDoc ? (
-              <p className="text-danger">{formik.errors.aadharDoc}</p>
+            {formik.errors.aadhar_doc && formik.touched.aadhar_doc ? (
+              <p className="text-danger">{formik.errors.aadhar_doc}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -113,13 +135,13 @@ const UploadDoc = () => {
               className="form-control"
               id="mobile1"
               placeholder="Enter Mobile Number"
-              name="aadharNumber"
-              value={formik.values.aadharNumber}
+              name="aadhar_number"
+              value={formik.values.aadhar_number}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.aadharNumber && formik.touched.aadharNumber ? (
-              <p className="text-danger">{formik.errors.aadharNumber}</p>
+            {formik.errors.aadhar_number && formik.touched.aadhar_number ? (
+              <p className="text-danger">{formik.errors.aadhar_number}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -129,16 +151,16 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="panDoc"
+              id="pan_doc"
               placeholder="Enter Name"
-              name="panDoc"
+              name="pan_doc"
               onChange={(event) => {
-                formik.setFieldValue('panDoc', event.currentTarget.files[0])
+                formik.setFieldValue('pan_doc', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.panDoc && formik.touched.panDoc ? (
-              <p className="text-danger">{formik.errors.panDoc}</p>
+            {formik.errors.pan_doc && formik.touched.pan_doc ? (
+              <p className="text-danger">{formik.errors.pan_doc}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -150,13 +172,13 @@ const UploadDoc = () => {
               className="form-control"
               id="mobile1"
               placeholder="Enter Mobile Number"
-              name="panNumber"
-              value={formik.values.panNumber}
+              name="pan_number"
+              value={formik.values.pan_number}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.panNumber && formik.touched.panNumber ? (
-              <p className="text-danger">{formik.errors.panNumber}</p>
+            {formik.errors.pan_number && formik.touched.pan_number ? (
+              <p className="text-danger">{formik.errors.pan_number}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -166,16 +188,16 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="residentDoc"
+              id="resident_doc"
               placeholder="Enter Name"
-              name="residentDoc"
+              name="resident_doc"
               onChange={(event) => {
-                formik.setFieldValue('residentDoc', event.currentTarget.files[0])
+                formik.setFieldValue('resident_doc', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.residentDoc && formik.touched.residentDoc ? (
-              <p className="text-danger">{formik.errors.residentDoc}</p>
+            {formik.errors.resident_doc && formik.touched.resident_doc ? (
+              <p className="text-danger">{formik.errors.resident_doc}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -185,16 +207,16 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="educationDoc"
+              id="education_doc"
               placeholder="Enter Name"
-              name="educationDoc"
+              name="education_doc"
               onChange={(event) => {
-                formik.setFieldValue('educationDoc', event.currentTarget.files[0])
+                formik.setFieldValue('education_doc', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.educationDoc && formik.touched.educationDoc ? (
-              <p className="text-danger">{formik.errors.educationDoc}</p>
+            {formik.errors.education_doc && formik.touched.education_doc ? (
+              <p className="text-danger">{formik.errors.education_doc}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -204,16 +226,16 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="bankDoc"
+              id="bank_doc"
               placeholder="Enter Name"
-              name="bankDoc"
+              name="bank_doc"
               onChange={(event) => {
-                formik.setFieldValue('bankDoc', event.currentTarget.files[0])
+                formik.setFieldValue('bank_doc', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.bankDoc && formik.touched.bankDoc ? (
-              <p className="text-danger">{formik.errors.bankDoc}</p>
+            {formik.errors.bank_doc && formik.touched.bank_doc ? (
+              <p className="text-danger">{formik.errors.bank_doc}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -225,13 +247,13 @@ const UploadDoc = () => {
               className="form-control"
               id="mobile1"
               placeholder="Enter Mobile Number"
-              name="bankAccNumber"
-              value={formik.values.bankAccNumber}
+              name="bank_acc_number"
+              value={formik.values.bank_acc_number}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.bankAccNumber && formik.touched.bankAccNumber ? (
-              <p className="text-danger">{formik.errors.bankAccNumber}</p>
+            {formik.errors.bank_acc_number && formik.touched.bank_acc_number ? (
+              <p className="text-danger">{formik.errors.bank_acc_number}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -243,13 +265,13 @@ const UploadDoc = () => {
               className="form-control"
               id="mobile1"
               placeholder="Enter Mobile Number"
-              name="bankName"
-              value={formik.values.bankName}
+              name="bank_name"
+              value={formik.values.bank_name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.bankName && formik.touched.bankName ? (
-              <p className="text-danger">{formik.errors.bankName}</p>
+            {formik.errors.bank_name && formik.touched.bank_name ? (
+              <p className="text-danger">{formik.errors.bank_name}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -261,13 +283,13 @@ const UploadDoc = () => {
               className="form-control"
               id="mobile1"
               placeholder="Enter Mobile Number"
-              name="ifscCode"
-              value={formik.values.ifscCode}
+              name="ifsc_code"
+              value={formik.values.ifsc_code}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.ifscCode && formik.touched.ifscCode ? (
-              <p className="text-danger">{formik.errors.ifscCode}</p>
+            {formik.errors.ifsc_code && formik.touched.ifsc_code ? (
+              <p className="text-danger">{formik.errors.ifsc_code}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -279,13 +301,13 @@ const UploadDoc = () => {
               className="form-control"
               id="mobile1"
               placeholder="Enter Mobile Number"
-              name="bankBranch"
-              value={formik.values.bankBranch}
+              name="bank_branch"
+              value={formik.values.bank_branch}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.bankBranch && formik.touched.bankBranch ? (
-              <p className="text-danger">{formik.errors.bankBranch}</p>
+            {formik.errors.bank_branch && formik.touched.bank_branch ? (
+              <p className="text-danger">{formik.errors.bank_branch}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -295,16 +317,16 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="expCerDoc"
+              id="exp_cer_doc"
               placeholder="Enter Name"
-              name="expCerDoc"
+              name="exp_cer_doc"
               onChange={(event) => {
-                formik.setFieldValue('expCerDoc', event.currentTarget.files[0])
+                formik.setFieldValue('exp_cer_doc', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.expCerDoc && formik.touched.expCerDoc ? (
-              <p className="text-danger">{formik.errors.expCerDoc}</p>
+            {formik.errors.exp_cer_doc && formik.touched.exp_cer_doc ? (
+              <p className="text-danger">{formik.errors.exp_cer_doc}</p>
             ) : null}
           </div>
           <div className="mb-3 col-4">
@@ -314,16 +336,16 @@ const UploadDoc = () => {
             <input
               type="file"
               className="form-control"
-              id="salSlipDoc"
+              id="sal_slip_doc"
               placeholder="Enter Name"
-              name="salSlipDoc"
+              name="sal_slip_doc"
               onChange={(event) => {
-                formik.setFieldValue('salSlipDoc', event.currentTarget.files[0])
+                formik.setFieldValue('sal_slip_doc', event.currentTarget.files[0])
               }}
               onBlur={formik.handleBlur}
             />
-            {formik.errors.salSlipDoc && formik.touched.salSlipDoc ? (
-              <p className="text-danger">{formik.errors.salSlipDoc}</p>
+            {formik.errors.sal_slip_doc && formik.touched.sal_slip_doc ? (
+              <p className="text-danger">{formik.errors.sal_slip_doc}</p>
             ) : null}
           </div>
         </div>

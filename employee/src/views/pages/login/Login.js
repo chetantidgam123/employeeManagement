@@ -15,43 +15,43 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { login} from 'src/Services/service'
+import { login } from 'src/Services/service'
 import { error_toast, success_toast } from 'src/Services/swalService'
 
 const Login = () => {
-   const navigate = useNavigate()
-  const [loginData, setLoginData] = useState({email_id:'',password:''})
+  const navigate = useNavigate()
+  const [loginData, setLoginData] = useState({ email_id: '', password: '' })
 
 
-const submitHandler = async () => {
-  
-        // if (!data.email || !data.password) {
-        //     toast({
-        //         title: "Please Fill all the feilds",
-        //         status: "warning",
-        //         duration: 5000,
-        //         isClosable: true,
-        //         position: "top-right"
-        //     })
-        //     setloader(false);
-        //     return
-        // }
+  const submitHandler = async () => {
 
-        await login(loginData)
-            .then((result) => {
-                if(result.data.code==200){
-                    localStorage.setItem('token', JSON.stringify(result.data.token))
-                    localStorage.setItem('role', JSON.stringify(result.data.data.role))
-                    navigate('/dashboard')
-                   success_toast(result.data.message)
-                  }else{
-                  error_toast(result.data.message)
-                }
-              })
-              .catch((err) => {
-                error_toast(err)
-            })
-    }
+    // if (!data.email || !data.password) {
+    //     toast({
+    //         title: "Please Fill all the feilds",
+    //         status: "warning",
+    //         duration: 5000,
+    //         isClosable: true,
+    //         position: "top-right"
+    //     })
+    //     setloader(false);
+    //     return
+    // }
+
+    await login(loginData)
+      .then((result) => {
+        if (result.data.code == 200) {
+          localStorage.setItem('token', JSON.stringify(result.data.token))
+          localStorage.setItem('role', JSON.stringify(result.data.data.role))
+          navigate('/dashboard')
+          success_toast(result.data.message)
+        } else {
+          error_toast(result.data.message)
+        }
+      })
+      .catch((err) => {
+        error_toast(err)
+      })
+  }
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>

@@ -22,7 +22,7 @@ const EmployeeList = () => {
   }, [])
 
   const getAllEmployeeList = async () => {
-    await getCall('users/getAllEmployee',{})
+    await getCall('users/getAllEmployee', {})
       .then((result) => {
         if (result.data.code == 200) {
           setempList(result.data.data)
@@ -34,20 +34,20 @@ const EmployeeList = () => {
         error_toast(err)
       })
   }
-  const handleChange = (e,ele)=>{
-    let a = empList.map((x)=>{
-      if(ele.id===x.id){
+  const handleChange = (e, ele) => {
+    let a = empList.map((x) => {
+      if (ele.id === x.id) {
         x.is_active = !x.is_active
       }
       return x
     })
     setempList(a)
   }
-    const getEmployeeById = async (id) => {
-    await getCall('users/getEmployeeById/'+id,{})
+  const getEmployeeById = async (id) => {
+    await getCall('users/getEmployeeById/' + id, {})
       .then((result) => {
         if (result.data.code == 200) {
-         console.log(result.data.data)
+          console.log(result.data.data)
         } else {
         }
       })
@@ -95,8 +95,11 @@ const EmployeeList = () => {
                     <CButton color="info" className="" variant="outline">
                       <CIcon icon={cilPencil} />
                     </CButton>
-                    <CButton color="info" className="mx-2" variant="outline" onClick={()=>{getEmployeeById(ele.id)}}>
+                    <CButton color="info" className="mx-2" variant="outline" onClick={() => { getEmployeeById(ele.id) }}>
                       <i className="fa fa-eye" aria-hidden="true"></i>
+                    </CButton>
+                    <CButton color={ele.is_profile != null ? "info" : "danger"} className="mx-2" variant="outline" onClick={() => { navigate('/update_profile/' + ele.id) }}>
+                      Update Profile
                     </CButton>
                     <CFormSwitch
                       className='d-inline-block'
@@ -104,7 +107,7 @@ const EmployeeList = () => {
                       color='info'
                       id="formSwitchCheckChecked"
                       checked={ele.is_active}
-                      onChange={(e)=>{handleChange(e,ele)}}
+                      onChange={(e) => { handleChange(e, ele) }}
                     />
                   </CTableDataCell>
                 </CTableRow>

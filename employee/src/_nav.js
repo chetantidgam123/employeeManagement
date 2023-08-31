@@ -27,14 +27,14 @@ const _nav = [
       color: 'info',
       text: 'NEW',
     },
-    role: 'employee'
+    role: ''
   },
   {
     component: CNavItem,
     name: 'Employee List',
     to: '/emplist',
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
-    role: 'employee'
+    role: 'admin'
   },
   {
     component: CNavItem,

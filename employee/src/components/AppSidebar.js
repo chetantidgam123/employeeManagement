@@ -17,7 +17,7 @@ import navigation from '../_nav'
 import { AuthState } from 'src/Context/AuthProvider'
 
 const AppSidebar = () => {
-  const {user} = AuthState()
+  const { user } = AuthState()
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
@@ -31,7 +31,11 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
-        <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
+        {/* <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} /> */}
+        <div className="d-flex">
+          <img src="" alt="" srcSet="" />
+          <h2 className='text-info'>Prevoyance</h2>
+        </div>
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
       </CSidebarBrand>
       <CSidebarNav className='sidebar_cst'>
