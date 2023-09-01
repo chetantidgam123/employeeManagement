@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
+require('events').EventEmitter.prototype._maxListeners = 0;
 db;
 // app.use(bodyParser.urlencoded({ limit: '50mb', extended: false })); // PARSE application/x-www-form-urlencoded
 // app.use(bodyParser.json({ limit: '50mb' })); // PARSE application/json

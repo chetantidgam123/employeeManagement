@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getCall, imgUrl } from 'src/Services/service'
-import './profilePage.scss'
+import './scss/profilePage.scss'
 const ProfilePage = () => {
     const [profile, setProfile] = useState({})
     useEffect(() => {

@@ -26,7 +26,8 @@ async function initialize() {
     // init models and add them to the exported db object
     // db.User = require('../api/model/user')(sequelize);
     // db.Docs = require('../api/model/uploaduserDocs')(sequelize);
-    db.profile = require('../api/model/employeeProfile')(sequelize);
+    // db.profile = require('../api/model/employeeProfile')(sequelize);
+    db.leaves = require('../api/model/leaves')(sequelize);
 
     // sync all models with database
     // await sequelize.sync({ alter: true });

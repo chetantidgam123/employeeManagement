@@ -3,6 +3,7 @@ import CIcon from '@coreui/icons-react'
 import {
   cilBell,
   cilCalculator,
+  cilCalendar,
   cilChartPie,
   cilCloudUpload,
   cilCursor,
@@ -50,6 +51,16 @@ const _nav = [
     to: '/update_profile',
     icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
     role: 'employee'
+  },
+  {
+    component: CNavTitle,
+    name: 'Events',
+  },
+  {
+    component: CNavItem,
+    name: 'Calender',
+    to: '/events/calender',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,
