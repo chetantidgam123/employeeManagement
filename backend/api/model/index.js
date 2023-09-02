@@ -1,3 +1,4 @@
 const userModel = require('./user')
 const uploadDocsModel = require('./uploaduserDocs')
-module.exports = { userModel,uploadDocsModel}
+const leavesModel = require('./leaves')
+module.exports = { userModel, uploadDocsModel, leavesModel }

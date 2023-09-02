@@ -4,7 +4,7 @@ const { authorize, authorizeAdmin } = require('../../../_middleware')
 const { createUser, registerSchema, gateDate, apply_leave, apply_leave_schema, } = require('./post')
 const { } = require('./get');
 
-module.exports = (userModel, { config }) => {
+module.exports = (model, { config }) => {
     const router = config.express.Router();
     const
         storage = multer.diskStorage({
@@ -32,6 +32,6 @@ module.exports = (userModel, { config }) => {
         }
     }
     const upload = multer({ storage: storage, fileFilter: fileFilter, });
-    router.post('/apply_leave', apply_leave_schema, apply_leave(userModel, { config }));
+    router.post('/apply_leave', authorize(), apply_leave_schema, apply_leave(model, { config }));
     return router;
 };

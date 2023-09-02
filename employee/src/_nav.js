@@ -61,6 +61,8 @@ const _nav = [
     name: 'Calender',
     to: '/events/calender',
     icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+
+    
   },
   {
     component: CNavTitle,
