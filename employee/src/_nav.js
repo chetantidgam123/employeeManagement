@@ -62,7 +62,14 @@ const _nav = [
     to: '/events/calender',
     icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
 
-    
+
+  },
+  {
+    component: CNavItem,
+    name: 'Apply Leave',
+    to: '/leave/apply_leave',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+    role: 'employee'
   },
   {
     component: CNavTitle,

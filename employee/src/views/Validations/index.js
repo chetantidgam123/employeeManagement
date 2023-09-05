@@ -79,8 +79,6 @@ export const uploadEmployeeDocSchema = yup.object({
   }).nullable(),
 })
 
-
-
 export const updateEmpProfileSchema = yup.object({
   doj: yup.string().min(2).max(30).required('Date of Joining Required'),
   salary: yup.string().min(2).max(30).required('Current Salary is Required'),
@@ -88,4 +86,13 @@ export const updateEmpProfileSchema = yup.object({
   date_of_app: yup.string().min(2).max(30).required('Date of Appraisal is Required'),
   designation: yup.string().min(2).max(30).required('Current designation is Required'),
   prometed_desig: yup.string().min(2).max(30).required('Promoted Designation is Required'),
+})
+
+export const applyLeaveSchema = yup.object({
+  start: yup.string().required('Start Date is Required'),
+  end: yup.string().required('End  Date is Required'),
+  color: yup.string().required('Select the Color for Leave'),
+  title: yup.string().min(2).max(50).required('Reason Of Leave'),
+  resource: yup.string().min(2).max(200, 'Max 200 Character allowed'),
+  leave_type: yup.string().required('Select Leave Type'),
 })

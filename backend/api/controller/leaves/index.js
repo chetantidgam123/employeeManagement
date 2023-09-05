@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const { authorize, authorizeAdmin } = require('../../../_middleware')
-const { createUser, registerSchema, gateDate, apply_leave, apply_leave_schema, } = require('./post')
+const { createUser, registerSchema, gateDate, apply_leave, apply_leave_schema, getLeaveByEmpIdAndMonth_schema, getLeaveByEmpIdAndMonth, } = require('./post')
 const { } = require('./get');
 
 module.exports = (model, { config }) => {
@@ -33,5 +33,6 @@ module.exports = (model, { config }) => {
     }
     const upload = multer({ storage: storage, fileFilter: fileFilter, });
     router.post('/apply_leave', authorize(), apply_leave_schema, apply_leave(model, { config }));
+    router.post('/getLeaveByEmpIdAndMonth', authorize(), getLeaveByEmpIdAndMonth_schema, getLeaveByEmpIdAndMonth(model, { config }));
     return router;
 };

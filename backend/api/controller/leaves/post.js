@@ -13,11 +13,12 @@ const moment = require("moment/moment");
 const apply_leave =
   ({ leavesModel }, { config }) =>
     async (req, res, next) => {
-      let leaves_Model = leavesModel(db.sequelize);
-      const { startDate, endDate, leave_type, color, title, resource, status } = req.body;
-      const { emp_id } = req.user
-      const dateArray = gateDate(startDate, endDate)
+      console.log(req.body);
+      const { start, end, leave_type, color, title, resource, status } = req.body;
+      const dateArray = await gateDate(start, end)
       if (dateArray) {
+        let leaves_Model = leavesModel(db.sequelize);
+        const { emp_id } = req.user
         try {
           const findemailQuery = `select leave_date from public."leaves" where emp_id =? and leave_date in (?) and (status=? or status=?)`;
           const leave = await db.sequelize.query(findemailQuery, {
@@ -52,7 +53,7 @@ const apply_leave =
             code: 200,
             data: leaves,
             message: "Request sent for leave Successfully!",
-            rejected: 'you already applied for this leave ' + alreadyLeve.join()
+            rejected: alreadyLeve.length > 0 ? 'you already applied for this leave ' + alreadyLeve.join() : ''
           })
 
         } catch (err) {
@@ -66,24 +67,50 @@ const apply_leave =
 
 function apply_leave_schema(req, res, next) {
   const schema = Joi.object({
-    emp_id: Joi.string().trim().min(3).max(50).required(),
-    startDate: Joi.string().trim().required(),
-    endDate: Joi.string().trim().required(),
+    start: Joi.string().trim().required(),
+    end: Joi.string().trim().required(),
     leave_type: Joi.string().trim().required(),
+    leave_date: Joi.string(),
     color: Joi.string().trim().allow(''),
     title: Joi.string().trim().min(3).max(200).required(),
     resource: Joi.string().max(500).allow(''),
-    status: Joi.string(),
+    status: Joi.string().allow(''),
   });
   validateRequest(req, next, schema);
 }
 
 const getLeaveByEmpIdAndMonth = ({ leavesModel }, { config }) =>
   async (req, res, next) => {
-
+    const { month } = req.body
+    const { emp_id } = req.user
+    try {
+      const findemailQuery = `SELECT resource,leave_id,emp_id,title,color,status,leave_type,leave_date FROM public.leaves
+                              WHERE DATE_TRUNC('month', leave_date) = DATE ? and emp_id =? and status=?`;
+      const leaves = await db.sequelize.query(findemailQuery, {
+        replacements: [month, emp_id, 'approved'],
+        type: QueryTypes.SELECT,
+      });
+      if (!leaves || leaves.length == 0) {
+        throw 'No Leaves'
+      }
+      return res.json({
+        status: true,
+        code: 200,
+        data: leaves,
+        message: "",
+      })
+    } catch (error) {
+      next(error)
+    }
   }
-
+function getLeaveByEmpIdAndMonth_schema(req, res, next) {
+  const schema = Joi.object({
+    month: Joi.string().trim().required(),
+  });
+  validateRequest(req, next, schema);
+}
 function gateDate(startDate, endDate) {
+  console.log('DATES', startDate, endDate);
   try {
     var dates = [];
     var currDate = moment(startDate).startOf('day');
@@ -102,5 +129,6 @@ function gateDate(startDate, endDate) {
 module.exports = {
   apply_leave,
   apply_leave_schema,
-  gateDate
+  getLeaveByEmpIdAndMonth,
+  getLeaveByEmpIdAndMonth_schema
 };
