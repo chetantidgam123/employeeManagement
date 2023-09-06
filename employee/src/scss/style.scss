@@ -38,3 +38,6 @@ border: 0.2em solid var(--cui-body-bg, #9999998c);
 .sidebar_cst::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+.leaves>.accordion-button {
+    padding: 2px auto !important;
+}

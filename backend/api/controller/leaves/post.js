@@ -10,6 +10,9 @@ const { QueryTypes } = require("sequelize");
 const user = require(".");
 const moment = require("moment/moment");
 
+
+
+// *******************  Employee Apis ****************
 const apply_leave =
   ({ leavesModel }, { config }) =>
     async (req, res, next) => {
@@ -126,9 +129,171 @@ function gateDate(startDate, endDate) {
     return false
   }
 }
+
+// ****************  Admin Apis  ******************* 
+const getEmpWhoAplLeave = ({ leavesModel }, { config }) =>
+  async (req, res, next) => {
+    const { start_date, end_date, emp_id, status } = req.body
+    try {
+      if (emp_id && emp_id != '' && status && status != '') {
+        const findleaveQuery = `select distinct e.firstname, e.lastname, l.emp_id
+      from public.leaves as l inner join public."EMPLOYEEs" as e on e.emp_id = l.emp_id
+       WHERE l.leave_date BETWEEN ? AND ? and l.emp_id=? and l.status=?;`;
+        const leaves = await db.sequelize.query(findleaveQuery, {
+          replacements: [start_date, end_date, emp_id, status],
+          type: QueryTypes.SELECT,
+        });
+        if (!leaves || leaves.length == 0) {
+          throw 'No Leaves Applied Employee'
+        }
+        return res.json({
+          status: true,
+          code: 200,
+          data: leaves,
+          message: "",
+        })
+      }
+      if ((emp_id && emp_id != '') && (!status || status == '')) {
+        let findleaveQuery1 = `select distinct e.firstname, e.lastname, l.emp_id
+      from public.leaves as l inner join public."EMPLOYEEs" as e on e.emp_id = l.emp_id
+       WHERE l.leave_date BETWEEN ? AND ? and l.emp_id=?`;
+        const leaves1 = await db.sequelize.query(findleaveQuery1, {
+          replacements: [start_date, end_date, emp_id],
+          type: QueryTypes.SELECT,
+        });
+        if (!leaves1 || leaves1.length == 0) {
+          throw 'No Leaves Applied Employee'
+        }
+        return res.json({
+          status: true,
+          code: 200,
+          data: leaves1,
+          message: "",
+        })
+      }
+      if ((status && status != '') && (!emp_id || emp_id == '')) {
+        let findleaveQuery1 = `select distinct e.firstname, e.lastname, l.emp_id
+      from public.leaves as l inner join public."EMPLOYEEs" as e on e.emp_id = l.emp_id
+       WHERE l.leave_date BETWEEN ? AND ? and l.status=?`;
+        const leaves2 = await db.sequelize.query(findleaveQuery1, {
+          replacements: [start_date, end_date, status],
+          type: QueryTypes.SELECT,
+        });
+        if (!leaves2 || leaves2.length == 0) {
+          throw 'No Leaves Applied By Anyone'
+        }
+        return res.json({
+          status: true,
+          code: 200,
+          data: leaves2,
+          message: "",
+        })
+      }
+      if ((!status || status == '') && (!emp_id || emp_id == '')) {
+        let findleaveQuery1 = `select distinct e.firstname, e.lastname, l.emp_id
+      from public.leaves as l inner join public."EMPLOYEEs" as e on e.emp_id = l.emp_id
+       WHERE l.leave_date BETWEEN ? AND ?`;
+        const leaves3 = await db.sequelize.query(findleaveQuery1, {
+          replacements: [start_date, end_date],
+          type: QueryTypes.SELECT,
+        });
+        if (!leaves3 || leaves3.length == 0) {
+          throw 'No Leaves Applied By Anyone'
+        }
+        return res.json({
+          status: true,
+          code: 200,
+          data: leaves3,
+          message: "",
+        })
+      }
+    }
+    catch (error) {
+      next(error)
+    }
+  }
+function getEmpWhoAplLeave_schema(req, res, next) {
+  const schema = Joi.object({
+    start_date: Joi.string().trim().allow(''),
+    end_date: Joi.string().trim().allow(''),
+    emp_id: Joi.string().trim().allow(''),
+    status: Joi.string().trim().allow(''),
+  });
+  validateRequest(req, next, schema);
+}
+const getEmpLeaveDateRange = ({ leavesModel }, { config }) =>
+  async (req, res, next) => {
+    const { start_date, end_date, emp_id, status } = req.body
+    try {
+      const findleaveQuery = `select e.firstname,e.lastname, l.leave_id,l.emp_id,l.title,l.resource,l.leave_type,l.status,l.leave_date,l.createdat as apply_date from public.leaves as l inner join public."EMPLOYEEs" as e on e.emp_id = l.emp_id WHERE l.leave_date BETWEEN ? AND ? and l.emp_id = ?
+;`;
+      const leaves = await db.sequelize.query(findleaveQuery, {
+        replacements: [start_date, end_date, emp_id],
+        type: QueryTypes.SELECT,
+      });
+      if (!leaves || leaves.length == 0) {
+        throw 'No Leaves Applied By Employee'
+      }
+      return res.json({
+        status: true,
+        code: 200,
+        data: leaves,
+        message: "",
+      })
+    }
+    catch (error) {
+      next(error)
+    }
+  }
+function getEmpLeaveDateRange_schema(req, res, next) {
+  const schema = Joi.object({
+    start_date: Joi.string().trim().allow(''),
+    end_date: Joi.string().trim().allow(''),
+    emp_id: Joi.string().trim().allow(''),
+    status: Joi.string().trim().allow(''),
+  });
+  validateRequest(req, next, schema);
+}
+const updateEmpLeave = ({ leavesModel }, { config }) =>
+  async (req, res, next) => {
+    const { status, reject_remark, leave_id } = req.body
+    try {
+      const updateleaveQuery = `UPDATE public."leaves" SET status=?,reject_remark=?,updatedat=? where leave_id=? `;
+      const leaves = await db.sequelize.query(updateleaveQuery, {
+        replacements: [status, reject_remark, new Date(), leave_id],
+        type: QueryTypes.UPDATE,
+      });
+      if (!leaves || leaves.length == 0) {
+        throw 'No Leaves Found'
+      }
+      return res.json({
+        status: true,
+        code: 200,
+        data: leaves,
+        message: "Leaves Updated Successfully",
+      })
+    }
+    catch (error) {
+      next(error)
+    }
+  }
+function updateEmpLeave_schema(req, res, next) {
+  const schema = Joi.object({
+    leave_id: Joi.number().required(),
+    status: Joi.string().trim().required(),
+    reject_remark: Joi.string().trim().max(50).required()
+  });
+  validateRequest(req, next, schema);
+}
 module.exports = {
   apply_leave,
   apply_leave_schema,
   getLeaveByEmpIdAndMonth,
-  getLeaveByEmpIdAndMonth_schema
+  getLeaveByEmpIdAndMonth_schema,
+  getEmpWhoAplLeave,
+  getEmpWhoAplLeave_schema,
+  getEmpLeaveDateRange,
+  getEmpLeaveDateRange_schema,
+  updateEmpLeave,
+  updateEmpLeave_schema
 };

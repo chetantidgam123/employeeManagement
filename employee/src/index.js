@@ -8,13 +8,13 @@ import { Provider } from 'react-redux'
 import store from './store'
 import { AuthProvider } from './Context/AuthProvider'
 import { BrowserRouter } from 'react-router-dom'
-
+import "react-datepicker/dist/react-datepicker.css";
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <BrowserRouter>
-     <AuthProvider>
-    <App />  
-     </AuthProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </Provider>,
 )

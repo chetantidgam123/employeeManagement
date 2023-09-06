@@ -65,11 +65,36 @@ const _nav = [
 
   },
   {
-    component: CNavItem,
-    name: 'Apply Leave',
-    to: '/leave/apply_leave',
-    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
-    role: 'employee'
+    component: CNavGroup,
+    name: 'Leaves',
+    to: '/leave',
+    role: 'employee',
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Apply Leave',
+        to: '/leave/apply_leave',
+        icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+        role: 'employee'
+      },
+    ]
+  },
+  {
+    component: CNavGroup,
+    name: 'Leaves',
+    to: '/leave',
+    role: 'admin',
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Leaves List',
+        to: '/leave/leaves_list',
+        icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+        role: 'admin'
+      },
+    ]
   },
   {
     component: CNavTitle,
