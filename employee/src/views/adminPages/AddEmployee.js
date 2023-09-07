@@ -1,7 +1,7 @@
 import { useFormik } from 'formik'
 import React from 'react'
 import { registerEmployeeSchema } from '../Validations'
-import { EmployeeId, getUserById, registration } from 'src/Services/service'
+import { EmployeeId, getCall, getUserById, registration } from 'src/Services/service'
 import { useNavigate } from 'react-router-dom'
 import { error_toast, success_toast } from 'src/Services/swalService'
 
@@ -63,7 +63,7 @@ const AddEmployee = () => {
       })
   }
   const getEmployeeId = async () => {
-    await EmployeeId()
+    await getCall('users/getEmployeeId', {})
       .then((result) => {
         if (result.data.code == 200) {
           formik.setFieldValue('emp_id', result.data.data)

@@ -45,7 +45,9 @@ const apply_leave =
               resource: resource,
               color: color,
               status: status,
-              leave_type: leave_type
+              leave_type: leave_type,
+              createdat: new Date(),
+              updatedat: new Date()
             }
             bulkData.push(obj)
           }

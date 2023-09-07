@@ -50,7 +50,7 @@ const _nav = [
     name: 'Update Employee Profile',
     to: '/update_profile',
     icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
-    role: 'employee'
+    role: 'admin'
   },
   {
     component: CNavTitle,

@@ -22,6 +22,7 @@ import {
     CModalHeader,
     CModalTitle,
     CButton,
+    CAccordionButton,
 } from '@coreui/react'
 import moment from 'moment'
 import React, { useState } from 'react'
@@ -203,12 +204,12 @@ const LeavesList = () => {
                     <div className='mt-3'>
                         {
                             leavesList.length == 0 ? (<div className='text-center notFoundData'><h5>Data Not Found</h5></div>) : (
-                                <CAccordion flush>
+                                <CAccordion>
                                     {leavesList &&
                                         leavesList.map((e, i) => {
                                             return (
-                                                <CAccordionItem key={i} itemKey={1}>
-                                                    <CAccordionHeader className='leaves' onClick={() => { handleOpenAcordian(e, i) }}>
+                                                <CAccordionItem key={i} itemKey={i}>
+                                                    <CAccordionHeader className='py-1' style={{ 'padding': '0 !important' }} onClick={() => { handleOpenAcordian(e, i) }}>
                                                         <div className='row col-12'>
                                                             <div className='col-1'><p>{i + 1}</p></div>
                                                             <div className='col-2'><p>{e.firstname}</p></div>

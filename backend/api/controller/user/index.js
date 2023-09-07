@@ -39,7 +39,7 @@ module.exports = (userModel, { config }) => {
     router.post('/updateEmployee', updateProfileEmployeeSchema, updateProfileEmployee(userModel, { config }));
     router.get('/getAllEmployee', authorize(), getAllEmployee(userModel, { config }));
     router.get('/getupdateProfile/:id', authorize(), getupdateProfile(userModel, { config }));
-    router.get('/getEmployeeId', authorize(), getEmployeeId(userModel, { config }));
+    router.get('/getEmployeeId', authorizeAdmin(), getEmployeeId(userModel, { config }));
     router.get('/getEmployeeById/:id', authorize(), getUserById(userModel, { config }));
     router.get('/getEmployeeProfile', authorize(), getProfile(userModel, { config }));
     router.get('/getUserDocs', authorize(), getUserDocs(userModel, { config }));

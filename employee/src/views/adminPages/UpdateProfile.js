@@ -56,7 +56,14 @@ const UpdateProfile = () => {
             .then((result) => {
                 if (result.data.code == 200) {
                     setEmployee(result.data.data[0])
-                    formik.setValues(result.data.data[0])
+                    let a = result.data.data[0]
+                    a.date_of_app = a.date_of_app == null ? '' : a.date_of_app
+                    a.designation = a.designation == null ? '' : a.designation
+                    a.doj = a.doj == null ? '' : a.doj
+                    a.increse_sal = a.increse_sal == null ? '' : a.increse_sal
+                    a.prometed_desig = a.prometed_desig == null ? '' : a.prometed_desig
+                    a.salary = a.salary == null ? '' : a.salary
+                    formik.setValues(a)
                 } else {
                 }
             })

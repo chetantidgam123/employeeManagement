@@ -12,7 +12,6 @@ const ProfilePage = () => {
             .then((result) => {
                 if (result.data.code == 200) {
                     setProfile(result.data.data[0])
-                    console.log(profile);
                 } else {
                 }
             })
@@ -22,7 +21,7 @@ const ProfilePage = () => {
     }
     return (
         <>
-            {profile && <div className='p-3' style={{ width: '70%', margin: 'auto', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }}>
+            {profile.firstname && <div className='p-3' style={{ width: '70%', margin: 'auto', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }}>
                 <div className='text-center'>
                     <img alt="" srcSet={imgUrl + 'uploads/profilepics/' + profile.profile_photo} style={{ width: '120px', height: '120px', borderRadius: '50%' }} />
                     <h3 className='mt-2'>{profile.firstname + ' ' + profile.lastname}</h3>
