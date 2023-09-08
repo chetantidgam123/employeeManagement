@@ -82,7 +82,7 @@ const _nav = [
         component: CNavItem,
         name: 'Leave Deatils',
         to: '/leave/leave_details',
-        icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+        icon: <CIcon icon={Clipboard} customClassName="nav-icon" />,
         role: 'employee'
       },
     ]
