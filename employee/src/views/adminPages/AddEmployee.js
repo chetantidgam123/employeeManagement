@@ -59,7 +59,7 @@ const AddEmployee = () => {
         }
       })
       .catch((err) => {
-        error_toast(err)
+        error_toast(err.response.data.message)
       })
   }
   const getEmployeeId = async () => {

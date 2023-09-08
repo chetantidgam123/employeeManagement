@@ -31,7 +31,7 @@ const EmployeeList = () => {
         }
       })
       .catch((err) => {
-        error_toast(err)
+        error_toast(err.response.data.message)
       })
   }
   const handleChange = (e, ele) => {

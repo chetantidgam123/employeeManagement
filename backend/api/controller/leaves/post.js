@@ -114,6 +114,38 @@ function getLeaveByEmpIdAndMonth_schema(req, res, next) {
   });
   validateRequest(req, next, schema);
 }
+const getLeavesList = ({ leavesModel }, { config }) =>
+  async (req, res, next) => {
+    const { emp_id } = req.user
+    const { startDate, endDate, status } = req.body
+    try {
+      const findleaveQuery = `select e.firstname,e.lastname, l.leave_id,l.emp_id,l.title,l.resource,l.leave_type,l.status,l.leave_date,l.createdat as apply_date from public.leaves as l inner join public."EMPLOYEEs" as e on e.emp_id = l.emp_id WHERE l.leave_date BETWEEN ? AND ? and l.emp_id = ?
+;`;
+      const leaves = await db.sequelize.query(findleaveQuery, {
+        replacements: [startDate, endDate, emp_id],
+        type: QueryTypes.SELECT,
+      });
+      if (!leaves || leaves.length == 0) {
+        throw 'No Leaves Applied By You'
+      }
+      return res.json({
+        status: true,
+        code: 200,
+        data: leaves,
+        message: "",
+      })
+    }
+    catch (error) {
+      next(error)
+    }
+  }
+function getLeavesList_schema(req, res, next) {
+  const schema = Joi.object({
+    startDate: Joi.string().trim().required(),
+    endDate: Joi.string().trim().required(),
+  });
+  validateRequest(req, next, schema);
+}
 function gateDate(startDate, endDate) {
   console.log('DATES', startDate, endDate);
   try {
@@ -297,5 +329,7 @@ module.exports = {
   getEmpLeaveDateRange,
   getEmpLeaveDateRange_schema,
   updateEmpLeave,
-  updateEmpLeave_schema
+  updateEmpLeave_schema,
+  getLeavesList,
+  getLeavesList_schema
 };

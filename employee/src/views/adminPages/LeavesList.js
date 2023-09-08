@@ -27,7 +27,6 @@ import {
 import moment from 'moment'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
-import ReactDatePicker from 'react-datepicker'
 import { getCall, postCall } from 'src/Services/service'
 import { error_toast, success_toast } from 'src/Services/swalService'
 import DatePicker from 'react-datepicker'
@@ -63,7 +62,7 @@ const LeavesList = () => {
                 }
             })
             .catch((err) => {
-                error_toast(err)
+                error_toast(err.response.data.message)
             })
     }
     const getEmpWhoAplLeave = async () => {
@@ -93,13 +92,19 @@ const LeavesList = () => {
             })
     }
     const handleOpenAcordian = (value, index) => {
+        console.log(value, index);
         if (!value.isOpen) {
             leavesList[index].isOpen = true
-            setleavesList(leavesList)
+            let a = leavesList.map((e, i) => {
+                if (i != index) {
+                    e.isOpen = false
+                }
+                return e
+            })
+            setleavesList(a)
             getEmp_leave(value)
         } else {
-            leavesList[index].isOpen = false
-            setleavesList(leavesList)
+
         }
     }
     const getEmp_leave = async (values) => {
@@ -118,7 +123,7 @@ const LeavesList = () => {
                 }
             })
             .catch((err) => {
-                error_toast(err)
+                error_toast(err.response.data.message)
             })
 
     }
@@ -138,7 +143,7 @@ const LeavesList = () => {
                 }
             })
             .catch((err) => {
-                error_toast(err)
+                error_toast(err.response.data.message)
             })
     }
     return (

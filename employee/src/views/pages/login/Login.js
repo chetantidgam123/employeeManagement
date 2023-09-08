@@ -49,7 +49,7 @@ const Login = () => {
         }
       })
       .catch((err) => {
-        error_toast(err)
+        error_toast(err.response.data.message)
       })
   }
   return (
