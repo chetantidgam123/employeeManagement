@@ -20,5 +20,7 @@ const uploadDocsSchema = {
   education_doc: { type: DataTypes.STRING(200), allowNull: true },
   exp_cer_doc: { type: DataTypes.STRING(200), allowNull: true },
   sal_slip_doc: { type: DataTypes.STRING(200), allowNull: true },
+  createdat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
+  updatedat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
 };
 module.exports = uploadDocsSchema;

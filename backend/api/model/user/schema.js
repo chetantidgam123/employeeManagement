@@ -29,6 +29,8 @@ const userSchem = {
   hash: { type: DataTypes.STRING(100), allowNull: false },
   uuid: { type: DataTypes.STRING(100), allowNull: false },
   role: { type: DataTypes.STRING(10), allowNull: false },
-  is_active:{type:DataTypes.BOOLEAN,allowNull:false,defaultValue:false}
+  is_active:{type:DataTypes.BOOLEAN,allowNull:false,defaultValue:false},
+  createdat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
+  updatedat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
 };
 module.exports = userSchem;

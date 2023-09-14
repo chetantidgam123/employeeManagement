@@ -12,5 +12,7 @@ const employeeProfileSchema = {
   date_of_app: { type: DataTypes.STRING(200), allowNull: false },
   designation: { type: DataTypes.STRING(200), allowNull: false },
   prometed_desig: { type: DataTypes.STRING(200), allowNull: false },
+  createdat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
+  updatedat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
 };
 module.exports = employeeProfileSchema;

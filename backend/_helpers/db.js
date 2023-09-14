@@ -27,7 +27,9 @@ async function initialize() {
     // db.User = require('../api/model/user')(sequelize);
     // db.Docs = require('../api/model/uploaduserDocs')(sequelize);
     // db.profile = require('../api/model/employeeProfile')(sequelize);
-    db.leaves = require('../api/model/leaves')(sequelize);
+    // db.leaves = require('../api/model/leaves')(sequelize);
+    // db.attendance = require('../api/model/attendance')(sequelize);
+    // db.max_emp_id = require('../api/model/maxId')(sequelize);
 
     // sync all models with database
     // await sequelize.sync({ alter: true });

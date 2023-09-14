@@ -13,8 +13,8 @@ const leavesScheema = {
   status: { type: DataTypes.STRING(20), allowNull: false, defaultValue: 'pending' },
   leave_type: { type: DataTypes.STRING(20), allowNull: false },
   reject_remark: { type: DataTypes.STRING(50), allowNull: true },
-  createdat: { type: DataTypes.DATE, allowNull: true },
-  updatedat: { type: DataTypes.DATE, allowNull: true },
+  createdat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
+  updatedat: { type: DataTypes.DATE, allowNull: true,defaultValue:new Date() },
 
 
 };

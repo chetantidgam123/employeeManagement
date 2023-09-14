@@ -1,7 +1,7 @@
-const userSchem = require('./schema')
-module.exports = userModel;
+const attendanceScheema = require('./schema')
+module.exports = attendanceModel;
 
-function userModel(sequelize) {
+function attendanceModel(sequelize) {
     const options = {
         defaultScope: {
             // exclude hash by default
@@ -12,5 +12,5 @@ function userModel(sequelize) {
             withHash: { attributes: {}, }
         }
     };
-    return sequelize.define('EMPLOYEE', userSchem, options);
+    return sequelize.define('attendance', attendanceScheema, options);
 }
