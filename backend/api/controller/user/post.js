@@ -106,7 +106,7 @@ const createUser =
           ],
           type: QueryTypes.INSERT,
         });
-        const insertIdQuery = `insert into public.max_emp_id (emp_id,emp_number) VALUES (?,?) RETURNING "emp_id"`;
+        const insertIdQuery = `insert into public.max_emp_ids (emp_id,emp_number) VALUES (?,?) RETURNING "emp_id"`;
         const [maxId] = await db.sequelize.query(insertIdQuery, {
           replacements: [params.emp_id, params.emp_id.split("-")[1]],
           type: QueryTypes.INSERT,

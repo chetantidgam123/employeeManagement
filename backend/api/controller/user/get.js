@@ -38,8 +38,15 @@ as emp left join public.employee_profiles as ep on ep.emp_id=emp.emp_id where ro
 }
 const getEmployeeId = ({ userModel }, { config }) => async (req, res, next) => {
     try {
-        const maxId = await db.sequelize.query(`SELECT MAX(emp_number) AS maxId FROM public.max_emp_id`, { type: QueryTypes.SELECT });
-        let newId = `PT-${Number(maxId[0].maxid) + 1}`
+        const maxId = await db.sequelize.query(`SELECT MAX(emp_number) AS maxId FROM public.max_emp_ids`, { type: QueryTypes.SELECT });
+        let newId = ''
+        if(maxId[0].maxid<10){
+            newId = `PT-00${Number(maxId[0].maxid) + 1}`
+        }else if(maxId[0].maxid>=10 && maxId[0].maxid<100){
+            newId = `PT-0${Number(maxId[0].maxid) + 1}`
+        }else{
+            newId = `PT-${Number(maxId[0].maxid) + 1}`
+        }
         if (!maxId || maxId.length == 0) throw 'Please try again or contact administration';
         return res.json({ status: true, code: 200, message: "", data: newId });
     } catch (error) {
