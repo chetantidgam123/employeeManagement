@@ -16,7 +16,6 @@ const moment = require("moment/moment");
 const apply_leave =
   ({ leavesModel }, { config }) =>
     async (req, res, next) => {
-      console.log(req.body);
       const { start, end, leave_type, color, title, resource, status } = req.body;
       const dateArray = await gateDate(start, end)
       if (dateArray) {

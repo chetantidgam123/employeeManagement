@@ -10,6 +10,7 @@ const EventCalender = React.lazy(() => import('./views/employeePages/EventCalend
 const ApplyLeave = React.lazy(() => import('./views/employeePages/ApplyLeave'))
 const LeavesList = React.lazy(() => import('./views/adminPages/LeavesList'))
 const LeaveDetails = React.lazy(() => import('./views/employeePages/LeavesDetails'))
+const Attendance = React.lazy(() => import('./views/employeePages/Attendance'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -75,6 +76,7 @@ const routes = [
   { path: '/leave/leave_details', name: 'Leave Details', element: LeaveDetails, role: 'employee' },
   { path: '/leave/leaves_list', name: 'Leave List', element: LeavesList, role: 'admin' },
   { path: '/profile', name: 'Profile', element: ProfilePage },
+  { path: '/attendance', name: 'Attendance', element: Attendance, role: 'employee' },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

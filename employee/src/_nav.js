@@ -65,6 +65,14 @@ const _nav = [
 
   },
   {
+    component: CNavItem,
+    name: 'Attendance',
+    to: '/attendance',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+
+
+  },
+  {
     component: CNavGroup,
     name: 'Leaves',
     to: '/leave',
