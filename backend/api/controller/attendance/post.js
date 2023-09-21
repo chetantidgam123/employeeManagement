@@ -27,8 +27,12 @@ const punchIn =
         console.log(attendance);
         let month_data = JSON.parse(attendance[0].month_data)
         monthData = await month_data.map((ele)=>{
-          if(day==ele.day){
+          if(day>ele.day){
+            ele.punch_in = false;
+          }else if(day==ele.day){
             ele.punch_in = true;
+          }else{
+             
           }
           return ele
         })
