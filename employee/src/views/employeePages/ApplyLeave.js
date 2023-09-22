@@ -30,7 +30,7 @@ const ApplyLeave = () => {
             }
         })
             .catch((err) => {
-                error_toast(err.response.data.message)
+                error_toast(err)
             })
     }
     return (

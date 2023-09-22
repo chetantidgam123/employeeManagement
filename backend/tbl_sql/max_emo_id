@@ -1,0 +1,20 @@
+-- Table: public.max_emp_ids
+
+-- DROP TABLE IF EXISTS public.max_emp_ids;
+
+CREATE TABLE IF NOT EXISTS public.max_emp_ids
+(
+    id integer NOT NULL DEFAULT nextval('max_emp_ids_id_seq'::regclass),
+    emp_id character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    emp_number character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT max_emp_ids_pkey PRIMARY KEY (id),
+    CONSTRAINT max_emp_ids_emp_id_key UNIQUE (emp_id),
+    CONSTRAINT max_emp_ids_emp_number_key UNIQUE (emp_number)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.max_emp_ids
+    OWNER to postgres;

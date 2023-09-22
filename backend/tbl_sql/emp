@@ -1,0 +1,46 @@
+-- Table: public.EMPLOYEEs
+
+-- DROP TABLE IF EXISTS public."EMPLOYEEs";
+
+CREATE TABLE IF NOT EXISTS public."EMPLOYEEs"
+(
+    id integer NOT NULL DEFAULT nextval('"EMPLOYEEs_id_seq"'::regclass),
+    emp_id character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    firstname character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    middlename character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    lastname character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    gender character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    dob date NOT NULL,
+    marital_status character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    temp_add character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    permanant_add character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    email_id character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    mobilenumber bigint NOT NULL,
+    par_mobilenumber bigint NOT NULL,
+    education character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    degree_date date NOT NULL,
+    degrre_cert character varying(200) COLLATE pg_catalog."default",
+    experiance_type character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    experiance_duration character varying(50) COLLATE pg_catalog."default",
+    pre_org_name character varying(100) COLLATE pg_catalog."default",
+    pre_org_address character varying(200) COLLATE pg_catalog."default",
+    pre_org_designation character varying(100) COLLATE pg_catalog."default",
+    hash character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    uuid character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    role character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    is_active boolean NOT NULL DEFAULT false,
+    createdat timestamp with time zone DEFAULT '2023-09-14 14:44:35.8+05:30'::timestamp with time zone,
+    updatedat timestamp with time zone DEFAULT '2023-09-14 14:44:35.8+05:30'::timestamp with time zone,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "EMPLOYEEs_pkey" PRIMARY KEY (id),
+    CONSTRAINT "EMPLOYEEs_email_id_key" UNIQUE (email_id),
+    CONSTRAINT "EMPLOYEEs_emp_id_key" UNIQUE (emp_id),
+    CONSTRAINT "EMPLOYEEs_mobilenumber_key" UNIQUE (mobilenumber)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."EMPLOYEEs"
+    OWNER to postgres;

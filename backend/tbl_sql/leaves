@@ -1,0 +1,26 @@
+-- Table: public.leaves
+
+-- DROP TABLE IF EXISTS public.leaves;
+
+CREATE TABLE IF NOT EXISTS public.leaves
+(
+    leave_id integer NOT NULL DEFAULT nextval('leaves_leave_id_seq'::regclass),
+    emp_id character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    leave_date timestamp with time zone,
+    title character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    resource character varying(300) COLLATE pg_catalog."default",
+    color character varying(20) COLLATE pg_catalog."default",
+    status character varying(20) COLLATE pg_catalog."default" NOT NULL DEFAULT 'pending'::character varying,
+    leave_type character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    reject_remark character varying(50) COLLATE pg_catalog."default",
+    createdat timestamp with time zone DEFAULT '2023-09-14 14:04:55.384+05:30'::timestamp with time zone,
+    updatedat timestamp with time zone DEFAULT '2023-09-14 14:04:55.384+05:30'::timestamp with time zone,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT leaves_pkey PRIMARY KEY (leave_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.leaves
+    OWNER to postgres;

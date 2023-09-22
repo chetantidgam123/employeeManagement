@@ -1,0 +1,27 @@
+-- Table: public.employee_profiles
+
+-- DROP TABLE IF EXISTS public.employee_profiles;
+
+CREATE TABLE IF NOT EXISTS public.employee_profiles
+(
+    id integer NOT NULL DEFAULT nextval('employee_profiles_id_seq'::regclass),
+    emp_id character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    doj character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    salary character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    increse_sal character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    date_of_app character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    designation character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    prometed_desig character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    createdat timestamp with time zone DEFAULT '2023-09-14 14:04:55.553+05:30'::timestamp with time zone,
+    updatedat timestamp with time zone DEFAULT '2023-09-14 14:04:55.553+05:30'::timestamp with time zone,
+    "createdAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT employee_profiles_pkey PRIMARY KEY (id),
+    CONSTRAINT employee_profiles_emp_id_key UNIQUE (emp_id),
+    CONSTRAINT employee_profiles_emp_id_key1 UNIQUE (emp_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.employee_profiles
+    OWNER to postgres;

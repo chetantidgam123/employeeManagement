@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const { authorize, authorizeAdmin } = require('../../../_middleware')
-const { punchIn, } = require('./post')
+const { punchIn, getAttByMonthYear, } = require('./post')
 const { } = require('./get');
 
 module.exports = (model, { config }) => {
@@ -34,6 +34,7 @@ module.exports = (model, { config }) => {
     const upload = multer({ storage: storage, fileFilter: fileFilter, });
     // ********************* employee *****************************
     router.post('/punchIn',authorize(), punchIn(model, { config }));
+    router.post('/getAttByMonthYear',authorize(), getAttByMonthYear(model, { config }));
     // router.post('/getLeaveByEmpIdAndMonth', authorize(), getLeaveByEmpIdAndMonth_schema, getLeaveByEmpIdAndMonth(model, { config }));
     // router.post('/getleaveslist', authorize(), getLeavesList_schema, getLeavesList(model, { config }));
 
