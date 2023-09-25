@@ -87,7 +87,7 @@ const Attendance = () => {
           maxDate={new Date()}
         />
         <h4>Monthly Attendance</h4>
-        <div className='tabel-responsive'>
+        <div className='table-responsive'>
         <CTable bordered className="mt-2">
                     <CTableHead>
                         <CTableRow>

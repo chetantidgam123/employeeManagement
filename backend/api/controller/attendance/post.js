@@ -95,13 +95,21 @@ const punchIn =
               obj.punch_in = 'A';
             }else if(day==(i + 1)){
               obj.punch_in = 'P';
+              var beginningTime = moment('10:45am', 'h:mma');
+              var currTime = new Date().getTime()
+              if(beginningTime.isBefore(currTime)){
+                //late punch
+                obj.late_punch = 1
+              }
             }else{
                obj.punch_in = '-'
             }
-            console.log('**********',moment(year+'-'+month+'-'+(i+1)).day());
-            if(moment(year+'-'+month+'-'+i+1).day()===0){
+            if(moment(year+'-'+month+'-'+(i+1)).day()===0){
               obj.punch_in='S'
             }
+
+           
+            
             monthData.push(obj);
           }
         }
