@@ -29,7 +29,8 @@ const Attendance = () => {
         if (result.data.status) {
           success_toast(result.data.message)
           // navigate('/emplist')
-          setAttendence(JSON.parse(result.data.data.month_data))
+          // setAttendence(JSON.parse(result.data.data.month_data))
+          getAttendance(new Date())
         } else {
           error_toast(result.data.message)
         }
@@ -45,9 +46,18 @@ const Attendance = () => {
             year:moment(date).year()
         }
     await postCall('/attendance/getAttByMonthYear', jbody)
-      .then((result) => {
+      .then(async (result) => {
         if (result.data.status) {
-          setAttendence(JSON.parse(result.data.data.month_data))
+          let att = JSON.parse(result.data.data.month_data)
+          let lev = result.data.leaves
+          if(lev && lev.length>0){
+            await lev.map((e)=>{
+              let day = moment(e.leave_date).date()
+              att[day-1].punch_in = 'L'
+              return e
+            })
+          }
+          setAttendence(att)
         } else {
             setAttendence([])
             error_toast(result.data.message)
@@ -85,9 +95,7 @@ const Attendance = () => {
                             {attendance &&
                             attendance.map((ele, i) => {
                                 return (
-                                    <>
                                     <CTableHeaderCell key={i} scope="col">{ele.day}</CTableHeaderCell>
-                                    </>
                                 )
                             })
                         }
@@ -95,11 +103,11 @@ const Attendance = () => {
                     </CTableHead>
                     <CTableBody>
                         <CTableRow >
-                            <CTableHeaderCell scope="row">Attendance</CTableHeaderCell>
+                            <CTableHeaderCell  scope="row">Attendance</CTableHeaderCell>
                         {attendance &&
-                            attendance.map((ele, i) => {
+                            attendance.map((ele, j) => {
                                 return (
-                                        <CTableHeaderCell key={i} scope="row">{ele.punch_in}</CTableHeaderCell>
+                                        <CTableHeaderCell key={j} scope="row">{ele.punch_in}</CTableHeaderCell>
                                         )
                                     })}
                                     </CTableRow>

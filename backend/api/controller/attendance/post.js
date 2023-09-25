@@ -45,6 +45,8 @@ const punchIn =
                 message: "Already Punch For Today",
               });
             }
+          }else if(day>ele.day && ele.punch_in=='-'){
+              ele.punch_in='A'
           }
           return ele
         })
@@ -82,7 +84,8 @@ const punchIn =
         let days = moment(year + "-" + month, "YYYY-MM").daysInMonth();
         if (days > 0) {
           for (let i = 0; i < days; i++) {
-            let obj = {
+            let obj = 
+            {
               day: (i + 1) < 10 ? "0" + (i + 1) : (i + 1),
               punch_in: 'A',
               late_punch: 0,
@@ -94,6 +97,10 @@ const punchIn =
               obj.punch_in = 'P';
             }else{
                obj.punch_in = '-'
+            }
+            console.log('**********',moment(year+'-'+month+'-'+(i+1)).day());
+            if(moment(year+'-'+month+'-'+i+1).day()===0){
+              obj.punch_in='S'
             }
             monthData.push(obj);
           }
@@ -141,11 +148,24 @@ const getAttByMonthYear =
         replacements: [emp_id, month.toString(), year.toString()],
         type: QueryTypes.SELECT,
       });
+      let start_date = moment().startOf('month').format('YYYY-MM-DD')
+      let end_date = moment().endOf('month').format('YYYY-MM-DD')
+      const findleaveEmp = `select * from public.leaves WHERE leave_date BETWEEN ? AND ? and emp_id=? and status=? `;
+      const leave = await db.sequelize.query(findleaveEmp, {
+        replacements: [start_date,end_date,emp_id, 'approved'],
+        type: QueryTypes.SELECT,
+      });
       if (attendance && attendance.length > 0) {
+        // if(leave && leave.length>0){
+        //   let leaveDay = leave.map((e)=>{
+        //     return moment(e.leave_date).day()
+        //   })
+        // }
         return res.json({
           status: true,
           code: 200,
           data: attendance[0],
+          leaves:leave,
           message: "",
         });
       }else{
