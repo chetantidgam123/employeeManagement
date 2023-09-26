@@ -96,3 +96,9 @@ export const applyLeaveSchema = yup.object({
   resource: yup.string().min(2).max(200, 'Max 200 Character allowed'),
   leave_type: yup.string().required('Select Leave Type'),
 })
+export const holidaySchema = yup.object({
+  date: yup.string().required('Date is Required'),
+  color: yup.string().required('Select the Color for Holiday'),
+  title: yup.string().min(2).max(50).required('Holiday Title Required'),
+  description: yup.string().min(2).max(200, 'Max 200 Character allowed'),
+})

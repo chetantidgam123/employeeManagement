@@ -11,6 +11,9 @@ const ApplyLeave = React.lazy(() => import('./views/employeePages/ApplyLeave'))
 const LeavesList = React.lazy(() => import('./views/adminPages/LeavesList'))
 const LeaveDetails = React.lazy(() => import('./views/employeePages/LeavesDetails'))
 const Attendance = React.lazy(() => import('./views/employeePages/Attendance'))
+const Holidays = React.lazy(() => import('./views/employeePages/Holidays'))
+const HolidayList = React.lazy(() => import('./views/adminPages/HolidayList'))
+const AddHoliday = React.lazy(() => import('./views/adminPages/AddHoliday'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -19,6 +22,7 @@ const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
 const Breadcrumbs = React.lazy(() => import('./views/base/breadcrumbs/Breadcrumbs'))
 const Cards = React.lazy(() => import('./views/base/cards/Cards'))
 const Leave = React.lazy(() => import('./views/employeePages/ApplyLeave'))
+const Event = React.lazy(() => import('./views/employeePages/EventCalender'))
 const Carousels = React.lazy(() => import('./views/base/carousels/Carousels'))
 const Collapses = React.lazy(() => import('./views/base/collapses/Collapses'))
 const ListGroups = React.lazy(() => import('./views/base/list-groups/ListGroups'))
@@ -69,8 +73,13 @@ const routes = [
   { path: '/uploaddocs', name: 'Upload Documents', element: Uploaddocs, role: 'employee' },
   { path: '/update_profile', name: 'Update Profile', element: UpdateProfile, role: 'employee' },
   { path: '/update_profile/:id', name: 'Update Profile', element: UpdateProfile, role: 'admin' },
+  { path: '/events', name: 'Events', element: Event, exact: true },
   { path: '/events/calender', name: 'Update Profile', element: EventCalender, role: 'employee' },
   { path: '/events/calender', name: 'Update Profile', element: EventCalender, role: 'admin' },
+  { path: '/holidays', name: 'Holiday List', element: Holidays, role: 'employee' },
+  { path: '/holidaylist', name: 'Holiday List', element: HolidayList, role: 'admin' },
+  { path: '/addholiday', name: 'Holidays', element: AddHoliday, role: 'admin' },
+  { path: '/editholiday/:id', name: 'Holidays', element: AddHoliday, role: 'admin' },
   { path: '/leave', name: 'Leave', element: Leave, exact: true },
   { path: '/leave/apply_leave', name: 'Apply Leave', element: ApplyLeave, role: 'employee' },
   { path: '/leave/leave_details', name: 'Leave Details', element: LeaveDetails, role: 'employee' },

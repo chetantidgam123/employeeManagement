@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { postCall } from 'src/Services/service';
+import { getCall, postCall } from 'src/Services/service';
 import {
     CButton,
     CModal,
@@ -33,7 +33,8 @@ const EventCalender = () => {
                         e.end = e.leave_date
                         return e
                     })
-                    setMyEventList(a)
+                    getAllHolidaysList(a)
+                    // setMyEventList(a)
                 } else {
 
                 }
@@ -42,6 +43,30 @@ const EventCalender = () => {
                 console.log(err)
             })
     }
+    const getAllHolidaysList = async (a) => {
+        await getCall('holiday/getHolidaysList_emp', {})
+          .then((result) => {
+            if (result.data.status) {
+                let holidays =result.data.data
+                for(let i =0;i<holidays.length;i++){
+                    let obj = {
+                        start:holidays[i].date,
+                        end:holidays[i].date,
+                        resource:holidays[i].description,
+                        title:holidays[i].title,
+                        color:holidays[i].color,
+                    }
+                    a.push(obj)
+
+                }
+                setMyEventList(a)
+            }
+           
+          })
+          .catch((err) => {
+           
+          })
+      }
     function eventStyleGetter(event, start, end, isSelected) {
         const style = {
             backgroundColor: event.color, // Set the background color based on the event's color property

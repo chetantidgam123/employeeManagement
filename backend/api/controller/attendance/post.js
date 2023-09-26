@@ -1,13 +1,5 @@
 const db = require("../../../_helpers/db");
-const { omitHash } = require("../../../_helpers/userHelperFunction");
-const configFile = require("../../../config.json");
-const { validateRequest } = require("_middleware/validate-request");
-const bcrypt = require("bcryptjs");
-const { v4: uuidv4 } = require("uuid");
-const Joi = require("joi");
-const jwt = require("jsonwebtoken");
 const { QueryTypes } = require("sequelize");
-const user = require(".");
 const moment = require("moment/moment");
 
 // *******************  Employee Apis ****************

@@ -30,6 +30,7 @@ async function initialize() {
     // db.leaves = require('../api/model/leaves')(sequelize);
     // db.attendance = require('../api/model/attendance')(sequelize);
     // db.max_emp_id = require('../api/model/maxId')(sequelize);
+    // db.holiday = require('../api/model/holidays')(sequelize);
 
     // sync all models with database
     // await sequelize.sync({ alter: true });

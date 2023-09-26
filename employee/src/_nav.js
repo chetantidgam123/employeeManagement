@@ -58,6 +58,20 @@ const _nav = [
   },
   {
     component: CNavItem,
+    name: 'Holiday List',
+    to: '/holidays',
+    role:'employee',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Holiday List',
+    to: '/holidaylist',
+    role:'admin',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
     name: 'Calender',
     to: '/events/calender',
     icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
@@ -68,6 +82,7 @@ const _nav = [
     component: CNavItem,
     name: 'Attendance',
     to: '/attendance',
+    role:'employee',
     icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
 
 
