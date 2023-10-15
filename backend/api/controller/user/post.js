@@ -111,12 +111,14 @@ const createUser =
           replacements: [params.emp_id, params.emp_id.split("-")[1]],
           type: QueryTypes.INSERT,
         });
+        console.log([maxId]);
         return res.json({
           status: true,
           code: 200,
           message: "User Registered Successfully!",
         });
       } catch (err) {
+        console.log(err);
         next(err);
       }
     };
@@ -383,13 +385,27 @@ const updateProfileEmployee =
             ],
             type: QueryTypes.INSERT,
           });
-          return res.json({
-            status: true,
-            code: 200,
-            message: "Employee Details Updated Successfully!",
-          });
+          if(rowOut.length>0){
+            const updateQuery = `UPDATE public."EMPLOYEEs" SET is_active =? WHERE emp_id=?`;
+            const [rowOut] = await db.sequelize.query(updateQuery, {
+              replacements: [true,params.emp_id],
+              type: QueryTypes.UPDATE,
+            });
+            return res.json({
+              status: true,
+              code: 200,
+              message: "Employee Details Updated Successfully!",
+            });
+          }else{
+            return res.json({
+              status: false,
+              code: 200,
+              message: "Employee Details not updated!",
+            });
+
+          }
         } else {
-          const updateQuery = `UPDATE public."employee_docs" SET doj,salary=?,increse_sal=?,date_of_app=?,designation=?,prometed_desig=?`;
+          const updateQuery = `UPDATE public."employee_docs" SET doj,salary=?,increse_sal=?,date_of_app=?,designation=?,prometed_desig=? WHERE emp_id = ?`;
           const [rowOut] = await db.sequelize.query(updateQuery, {
             replacements: [
               params.doj,
@@ -398,8 +414,9 @@ const updateProfileEmployee =
               params.date_of_app,
               params.designation,
               params.prometed_desig,
+              params.emp_id
             ],
-            type: QueryTypes.INSERT,
+            type: QueryTypes.UPDATE,
           });
           return res.json({
             status: true,

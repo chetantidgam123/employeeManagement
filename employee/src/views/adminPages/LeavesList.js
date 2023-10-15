@@ -136,6 +136,7 @@ const LeavesList = () => {
         await postCall('leaves/updateEmpLeave', jbody)
             .then(async (result) => {
                 if (result.data.code == 200) {
+                    setVisible(false)
                     getEmp_leave(values)
                     success_toast(result.data.message)
                 } else {

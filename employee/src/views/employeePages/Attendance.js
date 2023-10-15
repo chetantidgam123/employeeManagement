@@ -57,6 +57,14 @@ const Attendance = () => {
               return e
             })
           }
+          let holiday = result.data.holidays
+          if(holiday && holiday.length>0){
+            await holiday.map((e)=>{
+              let day = moment(e.holiday_date).date()
+              att[day-1].punch_in = 'H'
+              return e
+            })
+          }
           setAttendence(att)
         } else {
             setAttendence([])

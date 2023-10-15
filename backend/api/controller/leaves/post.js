@@ -22,6 +22,9 @@ const apply_leave =
         let leaves_Model = leavesModel(db.sequelize);
         const { emp_id } = req.user
         try {
+          if(dateArray.length<=2){
+
+          }
           const findemailQuery = `select leave_date from public."leaves" where emp_id =? and leave_date in (?) and (status=? or status=?)`;
           const leave = await db.sequelize.query(findemailQuery, {
             replacements: [emp_id, dateArray, 'pending', 'approved'],
@@ -29,8 +32,7 @@ const apply_leave =
           });
           let alreadyLeve = []
           if (leave && leave.length > 0) {
-            alreadyLeve = await leave.map(e => e.leave_date)
-            // throw 'you already applied for this leave ' + alreadyLeve.join()
+            alreadyLeve = await leave.map(e => moment(e.leave_date).format('YYYY-MM-DD'))
           }
           let bulkData = []
           for (let i = 0; i < dateArray.length; i++) {
@@ -95,7 +97,12 @@ const getLeaveByEmpIdAndMonth = ({ leavesModel }, { config }) =>
         type: QueryTypes.SELECT,
       });
       if (!leaves || leaves.length == 0) {
-        throw 'No Leaves'
+        return res.json({
+          status: false,
+          code: 200,
+          data: [],
+          message: "No leaves Found",
+        })
       }
       return res.json({
         status: true,
@@ -125,7 +132,12 @@ const getLeavesList = ({ leavesModel }, { config }) =>
         type: QueryTypes.SELECT,
       });
       if (!leaves || leaves.length == 0) {
-        throw 'No Leaves Applied By You'
+        return res.json({
+          status: false,
+          code: 200,
+          data: [],
+          message: "No data found",
+        })
       }
       return res.json({
         status: true,

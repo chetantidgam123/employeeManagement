@@ -155,17 +155,18 @@ const getAttByMonthYear =
         replacements: [start_date,end_date,emp_id, 'approved'],
         type: QueryTypes.SELECT,
       });
+      const findHolidays = `select date as holiday_date,title,is_active,holiday_id,description from public.holidays WHERE date BETWEEN ? AND ?  and is_active=? `;
+      const holidays = await db.sequelize.query(findHolidays, {
+        replacements: [start_date,end_date, true],
+        type: QueryTypes.SELECT,
+      });
       if (attendance && attendance.length > 0) {
-        // if(leave && leave.length>0){
-        //   let leaveDay = leave.map((e)=>{
-        //     return moment(e.leave_date).day()
-        //   })
-        // }
         return res.json({
           status: true,
           code: 200,
           data: attendance[0],
           leaves:leave,
+          holidays:holidays,
           message: "",
         });
       }else{

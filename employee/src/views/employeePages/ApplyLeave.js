@@ -3,12 +3,13 @@ import React from 'react'
 import { applyLeaveSchema } from '../Validations'
 import { postCall } from 'src/Services/service'
 import { error_toast, success_toast } from 'src/Services/swalService'
-
+import DatePicker from 'react-datepicker'
+import moment from 'moment'
 const ApplyLeave = () => {
     const formik = useFormik({
         initialValues: {
-            start: '',
-            end: '',
+            start: new Date(),
+            end: new Date(),
             color: "#ffffff",
             title: '',
             resource: '',
@@ -20,10 +21,16 @@ const ApplyLeave = () => {
         },
     })
     const applyLeave = async (values) => {
+        values.start = moment(values.start).format('YYYY-MM-DD')
+        values.end = moment(values.end).format('YYYY-MM-DD')
         await postCall('/leaves/apply_leave', values).then((result) => {
             if (result.data.code == 200) {
                 formik.resetForm()
-                success_toast(result.data.message)
+                if(result.data.rejected && result.data.rejected.length>0 ){
+                    error_toast(result.data.rejected)
+                }else{
+                    success_toast(result.data.message)
+                }
                 // navigate('/emplist')
             } else {
                 error_toast(result.data.message)
@@ -44,22 +51,42 @@ const ApplyLeave = () => {
                 {formik.errors.title && formik.touched.title ? (
                     <p className="text-danger">{formik.errors.title}</p>
                 ) : null}
-                <label htmlFor="title">Start Date</label>
-                <input type="date" className='form-control' name="start" id="" value={formik.values.start}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                />
-                {formik.errors.start && formik.touched.start ? (
+                <div className="dflex row applyleaveDatepicker">
+                         <div className="col-6">
+                            <div htmlFor="title">Start Date</div>
+                            <DatePicker
+                                style={{display:'block'}}
+                                selected={formik.values.start}
+                                dateFormat={'dd-MM-yyyy'}
+                                name='start'
+                                id='start'
+                                className="form-control"
+                                placeholderText="Start Date"
+                                onBlur={formik.handleBlur}
+                                onChange={(date)=>{formik.setFieldValue('start',date)}}
+                            />
+                        {formik.errors.start && formik.touched.start ? (
                     <p className="text-danger">{formik.errors.start}</p>
                 ) : null}
-                <label htmlFor="title">End Date</label>
-                <input type="date" className='form-control' name="end" id="" value={formik.values.end}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                />
-                {formik.errors.end && formik.touched.end ? (
+                        </div>
+                        <div className="col-6">
+                        <div htmlFor="title">End Date</div>
+                            <DatePicker
+                                selected={formik.values.end}
+                                dateFormat={'dd-MM-yyyy'}
+                                className="form-control"
+                                id='end'
+                                name="end"
+                                onBlur={formik.handleBlur}
+                                onChange={(date)=>{formik.setFieldValue('end',date)}}
+                                minDate={formik.values.start}
+                                placeholderText="End Date"
+                            />
+                              {formik.errors.end && formik.touched.end ? (
                     <p className="text-danger">{formik.errors.end}</p>
                 ) : null}
+                        </div>
+                </div>
                 <label htmlFor="title">Leave Type</label>
                 <select name="leave_type" id="" className="form-select" value={formik.values.leave_type}
                     onChange={formik.handleChange}

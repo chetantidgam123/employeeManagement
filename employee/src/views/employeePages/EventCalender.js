@@ -36,7 +36,8 @@ const EventCalender = () => {
                     getAllHolidaysList(a)
                     // setMyEventList(a)
                 } else {
-
+                    let a = []
+                    getAllHolidaysList(a)
                 }
             })
             .catch((err) => {
@@ -112,7 +113,7 @@ const EventCalender = () => {
                         </div>
                         <div className='mb-2'>
                             <small className='mb-2'>Leave Date</small>
-                            <p>{modalData.start}</p>
+                            <p>{moment(modalData.start).format('DD-MM-YYYY')}</p>
                         </div>
                         <div className='mb-2'>
                             <small className='mb-2'>Discription</small>

@@ -57,12 +57,12 @@ const UploadDoc = () => {
   }
 
   const uploadDocs = async (values) => {
-    const formdata = new FormData()
-    for (const key in formik.values) {
-      if (formik.values.hasOwnProperty(key)) {
-        formdata.append(key, formik.values[key])
-      }
-    }
+    // const formdata = new FormData()
+    // for (const key in formik.values) {
+    //   if (formik.values.hasOwnProperty(key)) {
+    //     formdata.append(key, formik.values[key])
+    //   }
+    // }
     await uploadsPost('users/uploadDocs', values)
       .then((result) => {
         if (result.data.code == 200) {

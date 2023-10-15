@@ -15,8 +15,8 @@ import {
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
-import { postCall } from 'src/Services/service'
-import { error_toast } from 'src/Services/swalService'
+import { deleteCall, postCall } from 'src/Services/service'
+import { confirm_toast, error_toast, success_toast } from 'src/Services/swalService'
 const LeavesDetails = () => {
     const [leaves, setLeaves] = useState([])
     const [leavesDetails, setLeavesDetails] = useState({})
@@ -43,8 +43,27 @@ const LeavesDetails = () => {
             })
             .catch((err) => {
                 setLeaves([])
-                error_toast(err.response.data.message)
+                // error_toast(err.response.data.message)
             })
+    }
+    const delete_leave =  (leave)=>{
+        console.log(leave);
+        let callback =  async (confirm)=>{
+            if(confirm.isConfirmed){
+                 await deleteCall('leaves/delete_leave/'+leave.leave_id)
+                .then((result)=>{
+                    if(result.data.status){
+                        success_toast(result.data.message)
+                        getLeaves()
+                    }else{
+                        error_toast(result.data.message)
+                    }
+                }).catch((err)=>{
+                    error_toast(err.response.data.message)
+                })
+            }
+        }
+        confirm_toast(callback)
     }
     return (
         <CCard>
@@ -101,6 +120,7 @@ const LeavesDetails = () => {
                         </CTableRow>
                     </CTableHead>
                     <CTableBody>
+                        {leaves.length==0 && <CTableRow><CTableDataCell colSpan={7} className='my-5'><p className='text-center'>No data Found</p></CTableDataCell></CTableRow>}
                         {leaves &&
                             leaves.map((ele, i) => {
                                 return (
@@ -117,7 +137,7 @@ const LeavesDetails = () => {
                                         </CTableDataCell>
                                         <CTableDataCell className=''>
                                             <CTooltip content='Remove' placement='top'>
-                                                <button className="btn btn-danger">
+                                                <button className="btn btn-danger" onClick={()=>{delete_leave(ele)}}>
                                                     <i className='fa fa-trash text-light'></i>
                                                 </button>
                                             </CTooltip>
