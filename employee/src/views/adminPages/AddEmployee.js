@@ -4,7 +4,7 @@ import { registerEmployeeSchema } from '../Validations'
 import { EmployeeId, getCall, getUserById, registration } from 'src/Services/service'
 import { useNavigate } from 'react-router-dom'
 import { error_toast, success_toast } from 'src/Services/swalService'
-
+import DatePicker from 'react-datepicker'
 const AddEmployee = () => {
   const navigate = useNavigate()
   const formik = useFormik({
@@ -141,21 +141,22 @@ const AddEmployee = () => {
                   <p className="text-danger">{formik.errors.lastname}</p>
                 ) : null}
               </div>
-              <div className="mb-3 col-4">
-                <label htmlFor="dob" className="form-label">
+              <div className="mb-3 col-4 applyleaveDatepicker">
+              <label htmlFor="dob" className="form-label">
                   Date of Birth
                 </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="dob"
-                  placeholder="Enter Name"
-                  name="dob"
-                  value={formik.values.dob}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.errors.dob && formik.touched.dob ? (
+                            <DatePicker
+                                showYearDropdown
+                                selected={formik.values.dob}
+                                dateFormat={'dd-MM-yyyy'}
+                                className="form-control"
+                                id='dob'
+                                name="dob"
+                                onBlur={formik.handleBlur}
+                                onChange={(date)=>{formik.setFieldValue('dob',date)}}
+                                placeholderText="Date of  Birth"
+                            />
+                         {formik.errors.dob && formik.touched.dob ? (
                   <p className="text-danger">{formik.errors.dob}</p>
                 ) : null}
               </div>
@@ -526,7 +527,7 @@ const AddEmployee = () => {
                   type="text"
                   className="form-control"
                   id="role"
-                  placeholder="Enter Role"
+                  placeholder="Employee Id"
                   name="emp_id"
                   value={formik.values.emp_id || ''}
                   disabled
@@ -536,9 +537,9 @@ const AddEmployee = () => {
                 ) : null}
               </div>
               <div className="col-2 mb-3">
-                <label htmlFor="role" className="form-label text-light">
+                <label htmlFor="role" className="form-label text-white">
                   Employee Id
-                </label>
+                </label><br />
                 <button type="button" className="btn btn-outline-info" onClick={getEmployeeId}>
                   Get Id
                 </button>
@@ -551,7 +552,7 @@ const AddEmployee = () => {
                   type="text"
                   className="form-control"
                   id="role"
-                  placeholder="Enter Role"
+                  placeholder="Enter Password"
                   name="password"
                   value={formik.values.password}
                   onChange={formik.handleChange}

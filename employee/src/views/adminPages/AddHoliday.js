@@ -4,6 +4,7 @@ import { holidaySchema } from '../Validations'
 import { getCall, postCall } from 'src/Services/service'
 import { error_toast, success_toast } from 'src/Services/swalService'
 import { useNavigate, useParams } from 'react-router-dom'
+import DatePicker from 'react-datepicker'
 import moment from 'moment'
 
 const AddHoliday = () => {
@@ -70,14 +71,23 @@ const AddHoliday = () => {
                         {formik.errors.title && formik.touched.title ? (
                             <p className="text-danger">{formik.errors.title}</p>
                         ) : null}
-                        <label htmlFor="date" className='form-label mt-2'>Date</label>
-                        <input type="date" className='form-control' name="date" id="date" value={formik.values.date}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                        />
-                        {formik.errors.start && formik.touched.start ? (
-                            <p className="text-danger">{formik.errors.start}</p>
-                        ) : null}
+                     <div className="col-12 applyleaveDatepicker">
+                        <div htmlFor="title"> Date</div>
+                            <DatePicker
+                                selected={formik.values.date}
+                                dateFormat={'dd-MM-yyyy'}
+                                className="form-control"
+                                id='date'
+                                name="date"
+                                onBlur={formik.handleBlur}
+                                onChange={(date)=>{formik.setFieldValue('date',date)}}
+                                minDate={formik.values.start}
+                                placeholderText="Select Date"
+                            />
+                              {formik.errors.date && formik.touched.date ? (
+                    <p className="text-danger">{formik.errors.date}</p>
+                ) : null}
+                        </div>
                         <label htmlFor="color" className='form-label mt-2'>Select Color</label>
                         <input type="color" className='form-control' name="color" id="color" value={formik.values.color}
                             onChange={formik.handleChange}

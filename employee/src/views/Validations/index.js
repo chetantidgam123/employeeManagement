@@ -5,7 +5,7 @@ export const registerEmployeeSchema = yup.object({
   middlename: yup.string().min(2).max(30).required('Middle name is Required'),
   lastname: yup.string().min(2).max(30).required('Last name is Required'),
   gender: yup.string().min(2).max(10).required('Gender is Required'),
-  dob: yup.string().min(2).max(20).required('DOB is Required'),
+  dob: yup.date().required('DOB is Required'),
   marital_status: yup.string().min(2).max(20).required('marital status is Required'),
   email_id: yup.string().email('Invalid Email').required('Email Id is required'),
   password: yup.string().min(6, 'minimum 6 character').required('Password is Required'),
@@ -89,15 +89,15 @@ export const updateEmpProfileSchema = yup.object({
 })
 
 export const applyLeaveSchema = yup.object({
-  start: yup.string().required('Start Date is Required'),
-  end: yup.string().required('End  Date is Required'),
+  start: yup.date().required('Start Date is Required'),
+  end: yup.date().required('End  Date is Required').min(yup.ref('start'), 'End date must be later than start date'),
   color: yup.string().required('Select the Color for Leave'),
   title: yup.string().min(2).max(50).required('Reason Of Leave'),
   resource: yup.string().min(2).max(200, 'Max 200 Character allowed'),
   leave_type: yup.string().required('Select Leave Type'),
 })
 export const holidaySchema = yup.object({
-  date: yup.string().required('Date is Required'),
+  date: yup.date().required('Date is Required'),
   color: yup.string().required('Select the Color for Holiday'),
   title: yup.string().min(2).max(50).required('Holiday Title Required'),
   description: yup.string().min(2).max(200, 'Max 200 Character allowed'),

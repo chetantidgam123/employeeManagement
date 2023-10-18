@@ -57,6 +57,16 @@ function getCall(url, body) {
     },
   })
 }
+function deleteCall(url) {
+  return axios({
+    method: 'delete',
+    url: Url + url,
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${JSON.parse(localStorage.getItem('token')) || ''}`,
+    },
+  })
+}
 function login(body) {
   return axios.post(Url + 'users/login', body, config)
 }
@@ -67,4 +77,4 @@ function getUserById(id) {
   return axios.get(Url + 'users/getUserById' + id, config)
 }
 
-export { registration, login, EmployeeId, getUserById, postCall, getCall, uploadsPost, imgUrl }
+export { registration, login, EmployeeId, getUserById, postCall, getCall, uploadsPost, imgUrl,deleteCall}

@@ -54,3 +54,6 @@ body {
     font-family: 'robotofont';
     /* Use the same font-family name as in @font-face */
 }
+.applyleaveDatepicker .react-datepicker-wrapper{
+    display: block !important;
+}

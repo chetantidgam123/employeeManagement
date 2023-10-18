@@ -10,7 +10,7 @@
             "type": "default",
             "options": {
                 "userName": "postgres",
-                "password": "prevo"
+                "password": "chetan"
             }
         },
         "dialectOptions": {
