@@ -95,7 +95,7 @@ const HolidayList = () => {
                 return (
                   <CTableRow key={i}>
                     <CTableHeaderCell scope="row">{i + 1}</CTableHeaderCell>
-                    <CTableHeaderCell scope="row">{ele.title}</CTableHeaderCell>
+                    <CTableDataCell >{ele.title}</CTableDataCell>
                     <CTableDataCell>{moment(ele.date).format('DD-MM-YYYY')}</CTableDataCell>
                     <CTableDataCell>{ele.description}</CTableDataCell>
                     <CTableDataCell className='d-flex align-items-center justify-content-between'>
