@@ -5,6 +5,7 @@ import { EmployeeId, getCall, getUserById, registration } from 'src/Services/ser
 import { useNavigate } from 'react-router-dom'
 import { error_toast, success_toast } from 'src/Services/swalService'
 import DatePicker from 'react-datepicker'
+import { numericOnly } from 'src/Config'
 const AddEmployee = () => {
   const navigate = useNavigate()
   const formik = useFormik({
@@ -74,6 +75,7 @@ const AddEmployee = () => {
         console.log(err)
       })
   }
+
 
   return (
     <div className="col-12">
@@ -268,7 +270,10 @@ const AddEmployee = () => {
                   placeholder="Enter Mobile Number"
                   name="mobilenumber"
                   value={formik.values.mobilenumber}
-                  onChange={formik.handleChange}
+                  maxLength={10}
+                  onChange={(e) => {
+                    return numericOnly(e.target.value) ? formik.handleChange(e) : "";
+                }}
                   onBlur={formik.handleBlur}
                 />
                 {formik.errors.mobilenumber && formik.touched.mobilenumber ? (
@@ -286,7 +291,10 @@ const AddEmployee = () => {
                   placeholder="Enter Mobile Number"
                   name="par_mobilenumber"
                   value={formik.values.par_mobilenumber}
-                  onChange={formik.handleChange}
+                  maxLength={10}
+                  onChange={(e) => {
+                    return numericOnly(e.target.value) ? formik.handleChange(e) : "";
+                }}
                   onBlur={formik.handleBlur}
                 />
                 {formik.errors.par_mobilenumber && formik.touched.par_mobilenumber ? (

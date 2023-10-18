@@ -158,7 +158,6 @@ function getLeavesList_schema(req, res, next) {
   validateRequest(req, next, schema);
 }
 function gateDate(startDate, endDate) {
-  console.log('DATES', startDate, endDate);
   try {
     var dates = [];
     var currDate = moment(startDate).startOf('day');

@@ -7,19 +7,13 @@ export const registerEmployeeSchema = yup.object({
   gender: yup.string().min(2).max(10).required('Gender is Required'),
   dob: yup.date().required('DOB is Required'),
   marital_status: yup.string().min(2).max(20).required('marital status is Required'),
-  email_id: yup.string().email('Invalid Email').required('Email Id is required'),
+  email_id: yup.string().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}$/, 'Enter valid email address.').required('Email Id is required'),
   password: yup.string().min(6, 'minimum 6 character').required('Password is Required'),
-  mobilenumber: yup
-    .string()
-    .matches(/^\+?[1-9][0-9]{5,12}$/, 'Mobile number must be a 10-digit number')
-    .required('Mobile number is required'),
-  par_mobilenumber: yup
-    .string()
-    .matches(/^\+?[1-9][0-9]{5,12}$/, 'Mobile number must be a 10-digit number')
-    .required('Mobile number is required'),
+  mobilenumber: yup.string().matches(/^[6-9]{1}[0-9]{9}$/, 'Enter valid mobile number.').min(10, 'Phone Number should not be less than 10 digit.').required('Mobile number is required'),
+  par_mobilenumber: yup.string().matches(/^[6-9]{1}[0-9]{9}$/, 'Enter valid mobile number.').min(10, 'Phone Number should not be less than 10 digit.').required('Mobile number is required'),
   temp_add: yup.string().min(2).max(200).required('Address is Required'),
   permanant_add: yup.string().min(2).max(200).required('Address is Required'),
-  education: yup.string().min(2).max(30).required('Qualification Id is Required'),
+  education: yup.string().min(2).max(30).required('Qualification is Required'),
   degree_date: yup.string().min(2).max(50).required('Date Required'),
   degrre_cert: yup.mixed().test('fileSize', 'File size is too large', (value) => {
     if (!value) return true;
@@ -43,12 +37,12 @@ export const uploadEmployeeDocSchema = yup.object({
     return value && value.size <= 10485760
     // 10MB
   }).nullable(),
-  aadhar_number: yup.string().min(2).max(30).required('Aadhar Number is Required'),
+  aadhar_number: yup.string().matches(/^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$/,'Enter a valid aadharcard number').required('Aadhar Number is Required'),
   aadhar_doc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
     if (!value) return true;
     return value && value.size <= 10485760 // 10MB
   }).nullable(),
-  pan_number: yup.string().min(2).max(30).required('Aadhar Number is Required'),
+  pan_number: yup.string().matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'Enter valid pan card number.').required('Aadhar Number is Required'),
   pan_doc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
     if (!value) return true;
     return value && value.size <= 10485760 // 10MB
@@ -61,10 +55,11 @@ export const uploadEmployeeDocSchema = yup.object({
     if (!value) return true;
     return value && value.size <= 10485760 // 10MB
   }).nullable(),
-  bank_acc_number: yup.string().min(2).max(30).required('Aadhar Number is Required'),
-  ifsc_code: yup.string().min(2).max(30).required('Aadhar Number is Required'),
-  bank_branch: yup.string().min(2).max(30).required('Aadhar Number is Required'),
-  bank_name: yup.string().min(2).max(30).required('Aadhar Number is Required'),
+  bank_acc_number: yup.string()
+  .matches(/^\d{9,18}$/, 'Invalid bank account number.').required('Bank account number is Required'),
+  ifsc_code: yup.string().matches(/^[A-Z]{4}[0]{1}[0-9]{6}$/, 'Invalid IFSC code.').required('IFSC code is Required'),
+  bank_branch: yup.string().min(2).max(30).required('Bank branch is Required'),
+  bank_name: yup.string().min(2).max(30).required('Bank name is Required'),
   bank_doc: yup.mixed().test('fileSize', 'File size is too large', (value) => {
     if (!value) return true;
     return value && value.size <= 10485760 // 10MB
@@ -81,8 +76,8 @@ export const uploadEmployeeDocSchema = yup.object({
 
 export const updateEmpProfileSchema = yup.object({
   doj: yup.string().min(2).max(30).required('Date of Joining Required'),
-  salary: yup.string().min(2).max(30).required('Current Salary is Required'),
-  increse_sal: yup.string().min(2).max(30).required('Incresed Salary is Required'),
+  salary: yup.string().min(2).max(10).required('Current Salary is Required'),
+  increse_sal: yup.string().min(2).max(10).required('Incresed Salary is Required'),
   date_of_app: yup.string().min(2).max(30).required('Date of Appraisal is Required'),
   designation: yup.string().min(2).max(30).required('Current designation is Required'),
   prometed_desig: yup.string().min(2).max(30).required('Promoted Designation is Required'),

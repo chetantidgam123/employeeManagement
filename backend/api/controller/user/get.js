@@ -57,12 +57,14 @@ const getProfile = ({ userModel }, { config }) => async (req, res, next) => {
     // let usermodel = userModel(db.sequelize)
     try {
         const { id } = req.user
-        const finduserQuery = `SELECT emp.firstname,emp.middlename,emp.lastname,emp.email_id,emp.emp_id,ep.doj,ep.designation,ed.profile_photo FROM public."EMPLOYEEs" as emp INNER JOIN public.employee_profiles as ep ON emp.emp_id = ep.emp_id Inner JOIN public.employee_docs as ed ON emp.emp_id = ed.emp_id where emp.id=?;`;
+        const finduserQuery = `SELECT emp.firstname,emp.middlename,emp.lastname,emp.email_id,emp.emp_id,ep.doj,ep.designation,ed.profile_photo FROM public."EMPLOYEEs" as emp INNER JOIN public.employee_profiles as ep ON emp.emp_id = ep.emp_id Left JOIN public.employee_docs as ed ON emp.emp_id = ed.emp_id where emp.id=?;`;
         const user = await db.sequelize.query(finduserQuery, {
             replacements: [id],
             type: QueryTypes.SELECT,
         });
-        if (!user || user.length == 0) throw 'User not found';
+        if (!user || user.length == 0){
+            return res.json({ status: false, code: 200, message: "User not found",});
+        }
         return res.json({ status: true, code: 200, message: "", data: user });
     } catch (error) {
         next(error)
@@ -77,7 +79,9 @@ const getupdateProfile = ({ userModel }, { config }) => async (req, res, next) =
             replacements: [id],
             type: QueryTypes.SELECT,
         });
-        if (!user || user.length == 0) throw 'User not found';
+        if (!user || user.length == 0){
+            return res.json({ status: false, code: 200, message: "User not found",});
+        }
         return res.json({ status: true, code: 200, message: "", data: user });
     } catch (error) {
         next(error)
@@ -92,7 +96,9 @@ const getUserDocs = ({ userModel }, { config }) => async (req, res, next) => {
             replacements: [emp_id],
             type: QueryTypes.SELECT,
         });
-        if (!user || user.length == 0) throw 'User not found';
+        if (!user || user.length == 0){
+            return res.json({ status: false, code: 200, message: "User not found",});
+        }
         return res.json({ status: true, code: 200, message: "", data: user });
     } catch (error) {
         next(error)

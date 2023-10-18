@@ -5,6 +5,7 @@ import { uploadEmployeeDocSchema } from '../Validations'
 import { error_toast, success_toast } from 'src/Services/swalService'
 import { useNavigate } from 'react-router-dom'
 import { getCall, uploadsPost } from 'src/Services/service'
+import { numericOnly } from 'src/Config'
 
 const UploadDoc = () => {
   const navigate = useNavigate()
@@ -82,6 +83,11 @@ const UploadDoc = () => {
         error_toast(err.response.data.message)
       })
   }
+  const captalizePan = (e) => {
+    e.target.value = (e.target.value).toUpperCase();
+    formik.handleChange(e)
+    
+}
   return (
     <>
       <h4>Upload Documents</h4>
@@ -137,7 +143,9 @@ const UploadDoc = () => {
               placeholder="Enter Mobile Number"
               name="aadhar_number"
               value={formik.values.aadhar_number}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                return numericOnly(e.target.value) ? formik.handleChange(e) : "";
+            }}
               onBlur={formik.handleBlur}
             />
             {formik.errors.aadhar_number && formik.touched.aadhar_number ? (
@@ -174,7 +182,7 @@ const UploadDoc = () => {
               placeholder="Enter Mobile Number"
               name="pan_number"
               value={formik.values.pan_number}
-              onChange={formik.handleChange}
+              onChange={(e) => { captalizePan(e)}}
               onBlur={formik.handleBlur}
             />
             {formik.errors.pan_number && formik.touched.pan_number ? (
@@ -249,7 +257,9 @@ const UploadDoc = () => {
               placeholder="Enter Mobile Number"
               name="bank_acc_number"
               value={formik.values.bank_acc_number}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                return numericOnly(e.target.value) ? formik.handleChange(e) : "";
+            }}
               onBlur={formik.handleBlur}
             />
             {formik.errors.bank_acc_number && formik.touched.bank_acc_number ? (
@@ -285,7 +295,7 @@ const UploadDoc = () => {
               placeholder="Enter Mobile Number"
               name="ifsc_code"
               value={formik.values.ifsc_code}
-              onChange={formik.handleChange}
+              onChange={(e) => { captalizePan(e)}}
               onBlur={formik.handleBlur}
             />
             {formik.errors.ifsc_code && formik.touched.ifsc_code ? (
