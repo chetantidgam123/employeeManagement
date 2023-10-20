@@ -49,14 +49,6 @@ const Attendance = () => {
       .then(async (result) => {
         if (result.data.status) {
           let att = JSON.parse(result.data.data.month_data)
-          let lev = result.data.leaves
-          if(lev && lev.length>0){
-            await lev.map((e)=>{
-              let day = moment(e.leave_date).date()
-              att[day-1].punch_in = 'L'
-              return e
-            })
-          }
           let holiday = result.data.holidays
           if(holiday && holiday.length>0){
             await holiday.map((e)=>{

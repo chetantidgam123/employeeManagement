@@ -78,7 +78,7 @@ const punchIn =
           for (let i = 0; i < days; i++) {
             let obj = 
             {
-              day: (i + 1) < 10 ? "0" + (i + 1) : (i + 1),
+              day: (i + 1) < 10 ? "0" + (i + 1) : (i + 1).toString(),
               punch_in: 'A',
               late_punch: 0,
             };
@@ -99,9 +99,6 @@ const punchIn =
             if(moment(year+'-'+month+'-'+(i+1)).day()===0){
               obj.punch_in='S'
             }
-
-           
-            
             monthData.push(obj);
           }
         }
@@ -148,8 +145,8 @@ const getAttByMonthYear =
         replacements: [emp_id, month.toString(), year.toString()],
         type: QueryTypes.SELECT,
       });
-      let start_date = moment().startOf('month').format('YYYY-MM-DD')
-      let end_date = moment().endOf('month').format('YYYY-MM-DD')
+      let start_date = moment(year+'-'+month+'-'+'01').startOf('month').format('YYYY-MM-DD')
+      let end_date = moment(year+'-'+month+'-'+'01').endOf('month').format('YYYY-MM-DD')
       const findleaveEmp = `select * from public.leaves WHERE leave_date BETWEEN ? AND ? and emp_id=? and status=? `;
       const leave = await db.sequelize.query(findleaveEmp, {
         replacements: [start_date,end_date,emp_id, 'approved'],
@@ -161,14 +158,59 @@ const getAttByMonthYear =
         type: QueryTypes.SELECT,
       });
       if (attendance && attendance.length > 0) {
-        return res.json({
-          status: true,
-          code: 200,
-          data: attendance[0],
-          leaves:leave,
-          holidays:holidays,
-          message: "",
-        });
+        if(moment().month()+1>month){
+          const update = false;
+          let a = []
+          a = JSON.parse(attendance[0].month_data)
+          console.log('dsasd',a);
+          let b = a.map((e)=>{
+            if(e.punch_in=='-'){
+              e.punch_in = 'A'
+              update = true;
+            }
+            return e
+          })
+          if(update){
+            const updateAtteQuery = `UPDATE public."attendances" SET month_data=?,updatedat=? where attendance_id=? `;
+            const [,updateatt] = await db.sequelize.query(updateAtteQuery, {
+              replacements: [JSON.stringify(b), new Date(), attendance[0].attendance_id],
+              type: QueryTypes.UPDATE,
+            });
+            if(updateatt > 0){
+              const findMonthOfEmp = `select attendance_id, month,year,emp_id,month_data from public."attendances" where attendance_id = ?`;
+              const row1 = await db.sequelize.query(findMonthOfEmp, {
+                replacements: [attendance[0].attendance_id],
+                type: QueryTypes.SELECT,
+              });
+              if (row1  && row1[0].attendance_id > 0) {
+                return res.json({
+                  status: true,
+                  code: 200,
+                  data: row1[0],
+                  message: "",
+                });
+              }
+          }
+          }else{
+            return res.json({
+              status: true,
+              code: 200,
+              data: attendance[0],
+              leaves:leave,
+              holidays:holidays,
+              message: "",
+            });
+          }
+        }else{
+          return res.json({
+            status: true,
+            code: 200,
+            data: attendance[0],
+            leaves:leave,
+            holidays:holidays,
+            message: "",
+          });
+        }
       }else{
         return res.json({
           status: false,

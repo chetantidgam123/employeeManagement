@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const { QueryTypes } = require("sequelize");
 const user = require(".");
 const moment = require("moment/moment");
+const e = require("express");
 
 
 
@@ -22,7 +23,7 @@ const apply_leave =
         let leaves_Model = leavesModel(db.sequelize);
         const { emp_id } = req.user
         try {
-          if(dateArray.length<=2){
+          if (dateArray.length <= 2) {
 
           }
           const findemailQuery = `select leave_date from public."leaves" where emp_id =? and leave_date in (?) and (status=? or status=?)`;
@@ -52,8 +53,7 @@ const apply_leave =
             }
             bulkData.push(obj)
           }
-          const leaves = await leaves_Model.bulkCreate(bulkData)
-
+          const leaves = await leaves_Model.bulkCreate(bulkData);
           return res.json({
             status: true,
             code: 200,
@@ -114,12 +114,14 @@ const getLeaveByEmpIdAndMonth = ({ leavesModel }, { config }) =>
       next(error)
     }
   }
+
 function getLeaveByEmpIdAndMonth_schema(req, res, next) {
   const schema = Joi.object({
     month: Joi.string().trim().required(),
   });
   validateRequest(req, next, schema);
 }
+
 const getLeavesList = ({ leavesModel }, { config }) =>
   async (req, res, next) => {
     const { emp_id } = req.user
@@ -150,6 +152,7 @@ const getLeavesList = ({ leavesModel }, { config }) =>
       next(error)
     }
   }
+
 function getLeavesList_schema(req, res, next) {
   const schema = Joi.object({
     startDate: Joi.string().trim().required(),
@@ -157,6 +160,7 @@ function getLeavesList_schema(req, res, next) {
   });
   validateRequest(req, next, schema);
 }
+
 function gateDate(startDate, endDate) {
   try {
     var dates = [];
@@ -256,6 +260,7 @@ const getEmpWhoAplLeave = ({ leavesModel }, { config }) =>
       next(error)
     }
   }
+
 function getEmpWhoAplLeave_schema(req, res, next) {
   const schema = Joi.object({
     start_date: Joi.string().trim().allow(''),
@@ -265,6 +270,7 @@ function getEmpWhoAplLeave_schema(req, res, next) {
   });
   validateRequest(req, next, schema);
 }
+
 const getEmpLeaveDateRange = ({ leavesModel }, { config }) =>
   async (req, res, next) => {
     const { start_date, end_date, emp_id, status } = req.body
@@ -289,6 +295,7 @@ const getEmpLeaveDateRange = ({ leavesModel }, { config }) =>
       next(error)
     }
   }
+
 function getEmpLeaveDateRange_schema(req, res, next) {
   const schema = Joi.object({
     start_date: Joi.string().trim().allow(''),
@@ -298,6 +305,7 @@ function getEmpLeaveDateRange_schema(req, res, next) {
   });
   validateRequest(req, next, schema);
 }
+
 const updateEmpLeave = ({ leavesModel }, { config }) =>
   async (req, res, next) => {
     const { status, reject_remark, leave_id } = req.body
@@ -307,20 +315,64 @@ const updateEmpLeave = ({ leavesModel }, { config }) =>
         replacements: [status, reject_remark, new Date(), leave_id],
         type: QueryTypes.UPDATE,
       });
-      if (!leaves || leaves.length == 0) {
-        throw 'No Leaves Found'
+      if (status == 'approved') {
+        const leaveQuery = `SELECT leave_date, emp_id from public."leaves" where leave_id=? `;
+        const leave = await db.sequelize.query(leaveQuery, {
+          replacements: [leave_id],
+          type: QueryTypes.SELECT,
+        });
+        const findMonthOfEmp = `select attendance_id, month,year,emp_id,month_data from public."attendances" where emp_id =? and month=? and year=?`;
+        const attendance = await db.sequelize.query(findMonthOfEmp, {
+          replacements: [leave[0].emp_id, (moment(leave[0].leave_date).month() + 1).toString(), (moment(leave[0].leave_date).year()).toString()],
+          type: QueryTypes.SELECT,
+        });
+        if (attendance && attendance.length > 0) {
+          let att = JSON.parse(attendance[0].month_data)
+          att[moment(leave[0].leave_date).date()-1].punch_in = 'L'
+          const updateAtteQuery = `UPDATE public."attendances" SET month_data=?,updatedat=? where attendance_id=? `;
+          const [, updateatt] = await db.sequelize.query(updateAtteQuery, {
+            replacements: [JSON.stringify(att), new Date(), attendance[0].attendance_id],
+            type: QueryTypes.UPDATE,
+          });
+          if (updateatt > 0) {
+            const findMonthOfEmp = `select attendance_id, month,year,emp_id,month_data from public."attendances" where attendance_id = ?`;
+            const row1 = await db.sequelize.query(findMonthOfEmp, {
+              replacements: [attendance[0].attendance_id],
+              type: QueryTypes.SELECT,
+            });
+            if (row1 && row1[0].attendance_id > 0) {
+  
+            } else {
+            }
+          } else {
+  
+          }
+        }
+      } else {
+
       }
+
+
+      if (!leaves || leaves.length == 0) {
       return res.json({
-        status: true,
+        status: false,
         code: 200,
         data: leaves,
-        message: "Leaves Updated Successfully",
+        message: "No Leaves Found",
       })
     }
-    catch (error) {
-      next(error)
-    }
+    return res.json({
+      status: true,
+      code: 200,
+      data: leaves,
+      message: "Leaves Updated Successfully",
+    })
   }
+    catch (error) {
+  next(error)
+}
+  }
+
 function updateEmpLeave_schema(req, res, next) {
   const schema = Joi.object({
     leave_id: Joi.number().required(),
@@ -341,5 +393,5 @@ module.exports = {
   updateEmpLeave,
   updateEmpLeave_schema,
   getLeavesList,
-  getLeavesList_schema
+  getLeavesList_schema,
 };

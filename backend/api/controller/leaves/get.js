@@ -1,15 +1,41 @@
 const db = require('../../../_helpers/db');
 const { Sequelize, QueryTypes } = require('sequelize');
-
-const getAllEmployee = ({ userModel }, { config }) => async (req, res, next) => {
+const moment = require("moment/moment");
+const getTotalLeavesData = ({ leavesModel }, { config }) =>
+  async (req, res, next) => {
+    const { emp_id } = req.user
     try {
-        const users = await db.sequelize.query(`SELECT emp.id,emp.emp_id,emp.firstname,emp.lastname,emp.email_id,emp.mobilenumber,emp.is_active ,ep.emp_id as is_profile FROM public."EMPLOYEEs"
-as emp left join public.employee_profiles as ep on ep.emp_id=emp.emp_id where role ='employee' ORDER BY emp.id DESC`, { type: QueryTypes.SELECT });
-        if (!users || users.length == 0) throw 'User not found';
-        return res.json({ status: true, code: 200, message: "", data: users });
-    } catch (error) {
-        next(error)
+      const findleaveQuery = `select doj from public."employee_profiles" WHERE emp_id = ?;`;
+      const leaves = await db.sequelize.query(findleaveQuery, {
+        replacements: [emp_id],
+        type: QueryTypes.SELECT,
+      });
+      if (!leaves || leaves.length == 0) {
+        return res.json({
+          status: false,
+          code: 200,
+          data: [],
+          message: "No data found",
+        })
+      }
+      let result = {
+        total_leaves:'',
+        applied_leaves:'',
+        pending_leaves:''
     }
-}
+    let doj = moment(leaves[0].doj).month()
+    let curr = moment().month()
+    result.total_leaves = (curr-doj)*1.5
+      return res.json({
+        status: true,
+        code: 200,
+        data: result,
+        message: "",
+      })
+    }
+    catch (error) {
+      next(error)
+    }
+  }
 
-module.exports = {}
+module.exports = {getTotalLeavesData}
