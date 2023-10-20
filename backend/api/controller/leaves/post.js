@@ -316,7 +316,7 @@ const updateEmpLeave = ({ leavesModel }, { config }) =>
         type: QueryTypes.UPDATE,
       });
       if (status == 'approved') {
-        const leaveQuery = `SELECT leave_date, emp_id from public."leaves" where leave_id=? `;
+        const leaveQuery = `SELECT leave_date,leave_type, emp_id from public."leaves" where leave_id=? `;
         const leave = await db.sequelize.query(leaveQuery, {
           replacements: [leave_id],
           type: QueryTypes.SELECT,
@@ -327,11 +327,20 @@ const updateEmpLeave = ({ leavesModel }, { config }) =>
           type: QueryTypes.SELECT,
         });
         if (attendance && attendance.length > 0) {
+          let applied_leaves = 0;
           let att = JSON.parse(attendance[0].month_data)
-          att[moment(leave[0].leave_date).date()-1].punch_in = 'L'
-          const updateAtteQuery = `UPDATE public."attendances" SET month_data=?,updatedat=? where attendance_id=? `;
+          att[moment(leave[0].leave_date).date()-1].punch_in = leave[0].leave_type=='FL'?'FL':'HL'
+          for (let i = 0; i < att.length; i++) {
+            if(att[i].punch_in=='L'){
+              applied_leaves = applied_leaves+1;
+            } 
+            if(att[i].punch_in=='HL'){
+              applied_leaves = applied_leaves+0.5;
+            }
+          }
+          const updateAtteQuery = `UPDATE public."attendances" SET month_data=?,applied_leaves=?,updatedat=? where attendance_id=? `;
           const [, updateatt] = await db.sequelize.query(updateAtteQuery, {
-            replacements: [JSON.stringify(att), new Date(), attendance[0].attendance_id],
+            replacements: [JSON.stringify(att),applied_leaves, new Date(), attendance[0].attendance_id],
             type: QueryTypes.UPDATE,
           });
           if (updateatt > 0) {
@@ -347,6 +356,36 @@ const updateEmpLeave = ({ leavesModel }, { config }) =>
           } else {
   
           }
+        }else{
+          let date = {
+            date:moment(leave[0].leave_date).date(),
+            month:(moment(leave[0].leave_date).month() + 1),
+            year:(moment(leave[0].leave_date).year())
+          }
+          let days = moment(date.year + "-" + date.month, "YYYY-MM").daysInMonth();
+          let monthData = []
+          if (days > 0) {
+            for (let i = 0; i < days; i++) {
+              let obj = 
+              {
+                day: (i + 1) < 10 ? "0" + (i + 1) : (i + 1).toString(),
+                punch_in: '-',
+                late_punch: 0,
+              };
+              if(date.date==(i + 1)){
+                obj.punch_in = 'L';
+              }
+              if(moment(date.year+'-'+date.month+'-'+(i+1)).day()===0){
+                obj.punch_in='S'
+              }
+              monthData.push(obj);
+            }
+          }
+          const _query2 = `insert into public.attendances (emp_id,month,year,month_data,applied_leaves) VALUES (?,?,?,?,?) RETURNING "attendance_id"`;
+          const _replacements2 = [leave[0].emp_id, date.month, date.year, JSON.stringify(monthData),leave[0].leave_type=='FL'?1:0.5
+        ];
+              const [rowOut] = await db.sequelize.query(_query2, { replacements: _replacements2, type: QueryTypes.INSERT });
+              const attendance_id = (rowOut && rowOut.length > 0 && rowOut[0] ? rowOut[0].attendance_id : 0);
         }
       } else {
 

@@ -92,8 +92,7 @@ const ApplyLeave = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}>
                     <option value="">Select leave type</option>
-                    <option value="HL1">1st Half Day</option>
-                    <option value="HL2">2nd Half Day</option>
+                    <option value="HL">Half Day</option>
                     <option value="FL">Full Day</option>
                 </select>
                 {formik.errors.leave_type && formik.touched.leave_type ? (
