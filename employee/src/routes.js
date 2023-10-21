@@ -13,6 +13,7 @@ const LeaveDetails = React.lazy(() => import('./views/employeePages/LeavesDetail
 const Attendance = React.lazy(() => import('./views/employeePages/Attendance'))
 const Holidays = React.lazy(() => import('./views/employeePages/Holidays'))
 const HolidayList = React.lazy(() => import('./views/adminPages/HolidayList'))
+const SalarySlip = React.lazy(() => import('./views/employeePages/pdfs/SalarySlip'))
 const AddHoliday = React.lazy(() => import('./views/adminPages/AddHoliday'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
@@ -86,6 +87,7 @@ const routes = [
   { path: '/leave/leaves_list', name: 'Leave List', element: LeavesList, role: 'admin' },
   { path: '/profile', name: 'Profile', element: ProfilePage },
   { path: '/attendance', name: 'Attendance', element: Attendance, role: 'employee' },
+  { path: '/salary_slip', name: 'Salary Slip', element: SalarySlip, role: 'employee' },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

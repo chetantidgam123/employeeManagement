@@ -15,16 +15,21 @@ import {
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import DatePicker from 'react-datepicker'
-import { deleteCall, postCall } from 'src/Services/service'
+import { deleteCall, getCall, postCall } from 'src/Services/service'
 import { confirm_toast, error_toast, success_toast } from 'src/Services/swalService'
 const LeavesDetails = () => {
     const [leaves, setLeaves] = useState([])
-    const [leavesDetails, setLeavesDetails] = useState({})
+    const [leavesDetails, setLeavesDetails] = useState({
+        total_leaves: '',
+        applied_leaves: '',
+        pending_leaves: ''
+      })
     const [startDate, setStartDate] = useState(null)
     const [endDate, setEndDate] = useState(null)
 
     useEffect(() => {
         getLeaves()
+        getLeavesData()
     }, [])
 
     const getLeaves = async () => {
@@ -46,6 +51,23 @@ const LeavesDetails = () => {
                 // error_toast(err.response.data.message)
             })
     }
+    const getLeavesData = async () => {
+        await getCall('leaves/getTotalLeavesData')
+            .then((result) => {
+                if (result.data.code == 200) {
+                    let {total_leaves,applied_leaves,pending_leaves} = result.data.data
+                    setLeavesDetails({...leavesDetails,pending_leaves,total_leaves,applied_leaves})
+                } else {
+                    setLeavesDetails({pending_leaves:0,total_leaves:0,applied_leaves:0})
+                    error_toast(result.data.message)
+                }
+            })
+            .catch((err) => {
+                setLeaves([])
+                // error_toast(err.response.data.message)
+            })
+    }
+
     const delete_leave =  (leave)=>{
         console.log(leave);
         let callback =  async (confirm)=>{
@@ -69,9 +91,9 @@ const LeavesDetails = () => {
         <CCard>
             <CCardHeader className='row'>
                 <h4 className='col-12'> Leave Details</h4>
-                <h5 className='col-3'> Total Leaves <br />18</h5>
-                <h5 className='col-3'> Leaves Applied <br />10</h5>
-                <h5 className='col-3'> Available Leaves <br />8</h5>
+                <h5 className='col-3'> Total Leaves <br />{leavesDetails.total_leaves}</h5>
+                <h5 className='col-3'> Leaves Applied <br />{leavesDetails.applied_leaves}</h5>
+                <h5 className='col-3'> Available Leaves <br />{leavesDetails.pending_leaves}</h5>
             </CCardHeader>
             <CCardBody>
                 <div className='d-flex justify-content-between'>
@@ -115,6 +137,7 @@ const LeavesDetails = () => {
                             <CTableHeaderCell scope="col">Full Name</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Leave Date</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Apply Date</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Leave Type</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Leave Status</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Action</CTableHeaderCell>
                         </CTableRow>
@@ -130,6 +153,7 @@ const LeavesDetails = () => {
                                         <CTableDataCell>{ele.firstname + ' ' + ele.lastname}</CTableDataCell>
                                         <CTableDataCell>{moment(ele.leave_date).format('DD-MM-YYYY')}</CTableDataCell>
                                         <CTableDataCell>{moment(ele.apply_date).format('DD-MM-YYYY')}</CTableDataCell>
+                                        <CTableDataCell>{ele.leave_type}</CTableDataCell>
                                         <CTableDataCell className='text-center'>
                                             <CBadge color={ele.status == 'approved' ? 'success' : ele.status == 'pending' ? 'warning' : 'danger'} shape="rounded-pill">
                                                 {ele.status}
@@ -137,7 +161,7 @@ const LeavesDetails = () => {
                                         </CTableDataCell>
                                         <CTableDataCell className=''>
                                             <CTooltip content='Remove' placement='top'>
-                                                <button className="btn btn-danger" onClick={()=>{delete_leave(ele)}}>
+                                                <button disabled={ele.status==='approved'} className="btn btn-danger" onClick={()=>{delete_leave(ele)}}>
                                                     <i className='fa fa-trash text-light'></i>
                                                 </button>
                                             </CTooltip>
