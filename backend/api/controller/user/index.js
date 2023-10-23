@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const { authorize, authorizeAdmin } = require('../../../_middleware')
-const { createUser, registerSchema, login, loginSchema, uploadUserDoc, uploadUserDocSchema, updateProfileEmployeeSchema, updateProfileEmployee, } = require('./post')
+const { createUser, registerSchema, login, loginSchema, uploadUserDoc, uploadUserDocSchema, updateProfileEmployeeSchema, updateProfileEmployee, getSalarySlip, } = require('./post')
 const { getUserById, getAllEmployee, getEmployeeId, getProfile, getUserDocs, getupdateProfile } = require('./get');
 const { log } = require('winston');
 
@@ -34,14 +34,15 @@ module.exports = (userModel, { config }) => {
     }
     const upload = multer({ storage: storage, fileFilter: fileFilter, });
     router.post('/create_account', upload.fields([{ name: 'degrre_cert' }]), registerSchema, createUser(userModel, { config }));
-    router.post('/uploadDocs', authorize(), upload.fields([{ name: 'profile_photo' }, { name: 'aadhar_doc' }, { name: 'pan_doc' }, { name: 'resident_doc' }, { name: 'education_doc' }, { name: 'bank_doc' }, { name: 'exp_cer_doc' }, { name: 'sal_slip_doc' }]), uploadUserDocSchema, uploadUserDoc(userModel, { config }));
     router.post('/login', loginSchema, login(userModel, { config }));
-    router.post('/updateEmployee', updateProfileEmployeeSchema, updateProfileEmployee(userModel, { config }));
-    router.get('/getAllEmployee', authorize(), getAllEmployee(userModel, { config }));
-    router.get('/getupdateProfile/:id', authorize(), getupdateProfile(userModel, { config }));
-    router.get('/getEmployeeId', authorizeAdmin(), getEmployeeId(userModel, { config }));
-    router.get('/getEmployeeById/:id', authorize(), getUserById(userModel, { config }));
+    router.post('/uploadDocs', authorize(), upload.fields([{ name: 'profile_photo' }, { name: 'aadhar_doc' }, { name: 'pan_doc' }, { name: 'resident_doc' }, { name: 'education_doc' }, { name: 'bank_doc' }, { name: 'exp_cer_doc' }, { name: 'sal_slip_doc' }]), uploadUserDocSchema, uploadUserDoc(userModel, { config }));
     router.get('/getEmployeeProfile', authorize(), getProfile(userModel, { config }));
     router.get('/getUserDocs', authorize(), getUserDocs(userModel, { config }));
+    router.post('/getSalarySlip', authorize(), getSalarySlip(userModel, { config }));
+    router.post('/updateEmployee',authorizeAdmin(), updateProfileEmployeeSchema, updateProfileEmployee(userModel, { config }));
+    router.get('/getupdateProfile/:id', authorizeAdmin(), getupdateProfile(userModel, { config }));
+    router.get('/getEmployeeById/:id', authorizeAdmin(), getUserById(userModel, { config }));
+    router.get('/getAllEmployee', authorizeAdmin(), getAllEmployee(userModel, { config }));
+    router.get('/getEmployeeId', authorizeAdmin(), getEmployeeId(userModel, { config }));
     return router;
 };

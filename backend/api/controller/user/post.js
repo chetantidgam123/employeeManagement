@@ -385,10 +385,10 @@ const updateProfileEmployee =
             ],
             type: QueryTypes.INSERT,
           });
-          if(rowOut.length>0){
+          if (rowOut.length > 0) {
             const updateQuery = `UPDATE public."EMPLOYEEs" SET is_active =? WHERE emp_id=?`;
             const [rowOut] = await db.sequelize.query(updateQuery, {
-              replacements: [true,params.emp_id],
+              replacements: [true, params.emp_id],
               type: QueryTypes.UPDATE,
             });
             return res.json({
@@ -396,7 +396,7 @@ const updateProfileEmployee =
               code: 200,
               message: "Employee Details Updated Successfully!",
             });
-          }else{
+          } else {
             return res.json({
               status: false,
               code: 200,
@@ -405,7 +405,7 @@ const updateProfileEmployee =
 
           }
         } else {
-          const updateQuery = `UPDATE public."employee_docs" SET doj,salary=?,increse_sal=?,date_of_app=?,designation=?,prometed_desig=? WHERE emp_id = ?`;
+          const updateQuery = `UPDATE public."employee_profiles" SET doj=?,salary=?,increse_sal=?,date_of_app=?,designation=?,prometed_desig=? WHERE emp_id = ?`;
           const [rowOut] = await db.sequelize.query(updateQuery, {
             replacements: [
               params.doj,
@@ -441,6 +441,45 @@ function updateProfileEmployeeSchema(req, res, next) {
   });
   validateRequest(req, next, schema);
 }
+const getSalarySlip =
+  ({ userModel }, { config }) =>
+    async (req, res, next) => {
+      const { emp_id } = req.user;
+      const { month, year } = req.body
+      try {
+        const findemp = `select ed.pan_number,ed.bank_acc_number,ed.ifsc_code,ed.bank_name,ed.bank_branch, emp.emp_id,emp.firstname,emp.middlename,emp.lastname,emp.temp_add,emp.permanant_add,ep.doj,ep.designation,ep.increse_sal  from public."EMPLOYEEs" as emp INNER JOIN public.employee_profiles 
+        as ep on emp.emp_id = ep.emp_id inner join public.employee_docs as ed on emp.emp_id = ed.emp_id  where emp.emp_id = ?`;
+        const employee = await db.sequelize.query(findemp, {
+          replacements: [emp_id],
+          type: QueryTypes.SELECT,
+        });
+
+        const findMonthOfEmp = `select attendance_id, month,year,emp_id,applied_leaves,month_data from public."attendances" where emp_id =? and month=? and year=?`;
+        const attendance = await db.sequelize.query(findMonthOfEmp, {
+          replacements: [emp_id, month, year],
+          type: QueryTypes.SELECT,
+        });
+        if (employee && employee.length > 0 && attendance && attendance.length>0) {
+          const salary_slipData = {
+            ...employee[0],...attendance[0]
+          }
+          return res.json({
+            data:salary_slipData,
+            status: true,
+            code: 200,
+            message: "",
+          });
+        } else {
+          return res.json({
+            status: false,
+            code: 200,
+            message: "Server error try after some time",
+          });
+        }
+      } catch (err) {
+        next(err);
+      }
+    };
 module.exports = {
   createUser,
   registerSchema,
@@ -449,5 +488,6 @@ module.exports = {
   uploadUserDoc,
   uploadUserDocSchema,
   updateProfileEmployee,
-  updateProfileEmployeeSchema
+  updateProfileEmployeeSchema,
+  getSalarySlip
 };

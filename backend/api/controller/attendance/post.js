@@ -159,7 +159,7 @@ const getAttByMonthYear =
       });
       if (attendance && attendance.length > 0) {
         if(moment().month()+1>month){
-          const update = false;
+          var update = false;
           let a = []
           a = JSON.parse(attendance[0].month_data)
           console.log('dsasd',a);

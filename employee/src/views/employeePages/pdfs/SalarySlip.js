@@ -1,10 +1,27 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import html2canvas from "html2canvas";
+import moment from 'moment'
 import { jsPDF } from "jspdf";
+import DatePicker from 'react-datepicker'
+import { postCall } from 'src/Services/service'
+import { error_toast, success_toast } from 'src/Services/swalService'
 import "./pdf.css"
 const SalarySlip = () => {
+    const [startDate, setStartDate] = useState(moment(new Date()).subtract(1,'month')._d)
+    const [jsonData,setJsonData] = useState({
+        month:"",
+        year:""
+    })
+    const [checkBox,setChekBox] = useState({
+        pf:false,
+        esic:false
+    })
+    const [loader,setLoader] =useState(false)
+    const [previewSlip,setPreviewSlip] =useState(false)
+    const [salarySlipData,setSalarySlipData] =useState({})
     const pdfRef = useRef()
     const downloadPdfDocument = () => {
+        setLoader(true)
         const input = pdfRef.current;
         html2canvas(input)
             .then((canvas) => {
@@ -16,14 +33,52 @@ const SalarySlip = () => {
                 const imgHeight = canvas.height;
                 const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
                 const imgX = (pdfWidth - imgWidth * ratio) / 2;
-                const imgY = 30;
+                const imgY = 20;
                 pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                setLoader(false)
                 pdf.save(`salarySlip.pdf`);
             })
     }
+    const getMonthYear = async (date)=>{
+        setStartDate(date)
+        setJsonData({...jsonData,month:moment(date).month()+1,year:moment(date).year()});
+        console.log(checkBox);
+        }
+        const handleChangeInput = (e)=>{
+            const {name,value} = e.target;
+                setChekBox({...checkBox,[name]:e.target.checked})
+
+        }
+        const previewSalSlip = async ()=>{
+              await postCall('/users/getSalarySlip', jsonData)
+                .then((result) => {
+                  if (result.data.status) {
+                    setSalarySlipData(result.data.data)
+                    setPreviewSlip(true)
+                    success_toast(result.data.message)
+                  } else {
+                    error_toast(result.data.message)
+                  }
+                })
+                .catch((err) => {
+                  error_toast(err.response.data.message)
+                })
+        }
     return (
         <div>
-
+             <DatePicker
+          className="form-control"
+          selected={startDate}
+          onChange={(date) => getMonthYear(date)}
+          showMonthYearPicker
+          excludeDates={[1661990400000, 1664582400000, 1667260800000, 1672531200000]}
+          dateFormat="MM/yyyy"
+          maxDate={moment(new Date()).subtract(1,'month')._d}
+        />
+        <label className='ms-4'>PF: <input className='mx-2' type="checkbox" name="pf" id="" checked={checkBox.pf} onChange={(e)=>{handleChangeInput(e)}} /></label>
+        <label>ESIC: <input className='mx-2' type="checkbox" name="esic" id="" onChange={(e)=>{handleChangeInput(e)}} checked={checkBox.esic} /></label>
+        <button className='btn btn-primary' onClick={previewSalSlip}>Preview Salary Slip</button>
+           {previewSlip && <>
             <div id='parentDiv' ref={pdfRef}>
                 <div>
                 <p style={{ marginBottom: '20pt' }}><span>
@@ -52,8 +107,7 @@ const SalarySlip = () => {
                                 <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>Name:</p>
                             </td>
                             <td style={{ width: '131pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '12pt', textAlign: 'left' }}>Chetan
-                                    Tidgam</p>
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '12pt', textAlign: 'left' }}>{(salarySlipData?.firstname).toUpperCase()+' '+(salarySlipData?.lastname).toUpperCase()}</p>
                             </td>
                             <td style={{ width: '58pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
@@ -62,7 +116,7 @@ const SalarySlip = () => {
                                 <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>PAN</p>
                             </td>
                             <td style={{ width: '128pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }} colSpan={3}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>BHQPT4264B
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{salarySlipData?.pan_number}
                                 </p>
                             </td>
                         </tr>
@@ -72,8 +126,7 @@ const SalarySlip = () => {
                                 </p>
                             </td>
                             <td style={{ width: '131pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>Software
-                                    Developer</p>
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{(salarySlipData?.designation).toUpperCase()}</p>
                             </td>
                             <td style={{ width: '58pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
@@ -101,15 +154,15 @@ const SalarySlip = () => {
                                 </p>
                             </td>
                             <td style={{ width: '128pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }} colSpan={3}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>Kotak</p>
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{(salarySlipData.bank_name).toUpperCase()}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '13pt' }}>
                             <td style={{ width: '58pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>Empl.ID</p>
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>Emp.ID</p>
                             </td>
                             <td style={{ width: '131pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>PT705</p>
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{salarySlipData.emp_id}</p>
                             </td>
                             <td style={{ width: '58pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
@@ -119,7 +172,7 @@ const SalarySlip = () => {
                                 </p>
                             </td>
                             <td style={{ width: '128pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }} colSpan={3}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>3246591967
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{salarySlipData.bank_acc_number}
                                 </p>
                             </td>
                         </tr>
@@ -138,7 +191,7 @@ const SalarySlip = () => {
                                     payable</p>
                             </td>
                             <td style={{ width: '128pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }} colSpan={3}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>September
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{moment(jsonData.year+'-'+jsonData.month+'-01').format('MMMM')}
                                 </p>
                             </td>
                         </tr>
@@ -147,7 +200,7 @@ const SalarySlip = () => {
                                 <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>DOJ:</p>
                             </td>
                             <td style={{ width: '131pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}>08-02-22
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '11pt', textAlign: 'left' }}>{salarySlipData?.doj}
                                 </p>
                             </td>
                             <td style={{ width: '58pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
@@ -158,7 +211,7 @@ const SalarySlip = () => {
                                     Month</p>
                             </td>
                             <td style={{ width: '128pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }} colSpan={3}>
-                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>30</p>
+                                <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{moment(jsonData.year+'-'+jsonData.month+'-01').daysInMonth()}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '13pt' }}>
@@ -203,7 +256,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '41pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s7" style={{ textIndent: '0pt', textAlign: 'right' }}>15,000</p>
+                                <p className="s7" style={{ textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.5}</p>
                             </td>
                             <td style={{ width: '37pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
                                 <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>INR</p>
@@ -212,7 +265,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '46pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'right' }}>1,80,000</p>
+                                <p className="s2" style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.5*12}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '14pt' }}>
@@ -229,7 +282,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '41pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>7,500</p>
+                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.25}</p>
                             </td>
                             <td style={{ width: '37pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
                                 <p className="s2" style={{ paddingTop: '2pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
@@ -238,7 +291,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '46pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>90,000</p>
+                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.25*12}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '15pt' }}>
@@ -255,7 +308,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '41pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>6,000</p>
+                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.20}</p>
                             </td>
                             <td style={{ width: '37pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
                                 <p className="s2" style={{ paddingTop: '2pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
@@ -264,7 +317,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '46pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>72,000</p>
+                                <p className="s2" style={{ paddingTop: '2pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.20*12}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '22pt' }}>
@@ -281,7 +334,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '41pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '3pt', textIndent: '0pt', textAlign: 'right' }}>1,500</p>
+                                <p className="s2" style={{ paddingTop: '3pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.05}</p>
                             </td>
                             <td style={{ width: '37pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt' }}>
                                 <p className="s2" style={{ paddingTop: '3pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
@@ -290,7 +343,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '46pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '3pt', textIndent: '0pt', textAlign: 'right' }}>18,000</p>
+                                <p className="s2" style={{ paddingTop: '3pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal)*0.05*12}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '10pt' }}>
@@ -304,13 +357,13 @@ const SalarySlip = () => {
                                 <p className="s5" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>INR</p>
                             </td>
                             <td style={{ width: '66pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#FAE9D9" }}>
-                                <p className="s5" style={{ paddingLeft: '41pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>30,000</p>
+                                <p className="s5" style={{ paddingLeft: '41pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{salarySlipData.increse_sal}</p>
                             </td>
                             <td style={{ width: '61pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: '#FAE9D9' }} colSpan={2}>
                                 <p className="s5" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>INR</p>
                             </td>
                             <td style={{ width: '67pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#F0DCDB" }}>
-                                <p className="s2" style={{ paddingLeft: '34pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>3,60,000
+                                <p className="s2" style={{ paddingLeft: '34pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>{salarySlipData.increse_sal*12}
                                 </p>
                             </td>
                         </tr>
@@ -372,7 +425,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '41pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'right' }}>_</p>
+                                <p className="s2" style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'right' }}>{checkBox.pf?(salarySlipData.increse_sal*0.12):''}</p>
                             </td>
                             <td style={{ width: '37pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
                                 <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '9pt', textAlign: 'left' }}>INR</p>
@@ -381,7 +434,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '46pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
+                                <p style={{ textIndent: '0pt', textAlign: 'right' }}>{checkBox.pf?(salarySlipData.increse_sal*0.12*12):''}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '14pt' }}>
@@ -398,7 +451,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '41pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
+                                <p style={{ textIndent: '0pt', textAlign: 'right' ,fontWeight:'normal' }}>{checkBox.esic?(salarySlipData.increse_sal*0.04):''}</p>
                             </td>
                             <td style={{ width: '37pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
                                 <p className="s2" style={{ paddingTop: '2pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
@@ -407,7 +460,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '46pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
+                                <p style={{ textIndent: '0pt', textAlign: 'right' }}>{checkBox.esic?(salarySlipData.increse_sal*0.04*12):''}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '16pt' }}>
@@ -477,13 +530,13 @@ const SalarySlip = () => {
                                 <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
                             </td>
                             <td style={{ width: '66pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#FAE9D9" }} rowSpan={2}>
-                                <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '41pt', textIndent: '0pt', textAlign: 'left' }}>30,000</p>
+                                <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '41pt', textIndent: '0pt', textAlign: 'left' }}>{(salarySlipData.increse_sal-(checkBox.pf?salarySlipData.increse_sal*0.04:0)-( checkBox.esic?salarySlipData.increse_sal*0.12:0))}</p>
                             </td>
                             <td style={{ width: '61pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#FAE9D9" }} colSpan={2} rowSpan={2}>
                                 <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
                             </td>
                             <td style={{ width: '67pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#F0DCDB" }}>
-                                <p className="s2" style={{ paddingLeft: '34pt', textIndent: '0pt', lineHeight: '8pt', textAlign: 'left' }}>3,60,000
+                                <p className="s2" style={{ paddingLeft: '34pt', textIndent: '0pt', lineHeight: '8pt', textAlign: 'left' }}>{(salarySlipData.increse_sal-(checkBox.pf?salarySlipData.increse_sal*0.04:0)-( checkBox.esic?salarySlipData.increse_sal*0.12:0))*12}
                                 </p>
                             </td>
                         </tr>
@@ -530,7 +583,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '36pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'right' }}>30,000</p>
+                                <p className="s2" style={{ textIndent: '0pt', lineHeight: '9pt', textAlign: 'right' }}>{salarySlipData.increse_sal}</p>
                             </td>
                             <td style={{ width: '194pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }} colSpan={4} rowSpan={5}>
                                 <p className="s2" style={{ paddingLeft: '1pt', textIndent: '0pt', lineHeight: '111%', textAlign: 'left' }}>18 Casual
@@ -540,24 +593,9 @@ const SalarySlip = () => {
                                     per Month)</p>
                             </td>
                         </tr>
-                        <tr style={{ height: '20pt' }}>
-                            <td style={{ width: '189pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '6pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>Less : ESIC
-                                </p>
-                            </td>
-                            <td style={{ width: '58pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '6pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
-                            </td>
-                            <td style={{ width: '25pt' }}>
-                                <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
-                            </td>
-                            <td style={{ width: '36pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
-                            </td>
-                        </tr>
                         <tr style={{ height: '16pt' }}>
                             <td style={{ width: '189pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p className="s2" style={{ paddingTop: '2pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>Less; Travel
+                                <p className="s2" style={{ paddingTop: '2pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>Less: Working Days
                                 </p>
                             </td>
                             <td style={{ width: '58pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
@@ -582,7 +620,22 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '36pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
+                                <p style={{ textIndent: '0pt', textAlign: 'right',fontWeight:'normal' }}>{checkBox.pf?(salarySlipData.increse_sal*0.12):''}</p>
+                            </td>
+                        </tr>
+                        <tr style={{ height: '20pt' }}>
+                            <td style={{ width: '189pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
+                                <p className="s2" style={{ paddingTop: '6pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>Less : ESIC
+                                </p>
+                            </td>
+                            <td style={{ width: '58pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt' }}>
+                                <p className="s2" style={{ paddingTop: '6pt', paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
+                            </td>
+                            <td style={{ width: '25pt' }}>
+                                <p style={{ textIndent: '0pt', textAlign: 'left' }}></p>
+                            </td>
+                            <td style={{ width: '36pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
+                                <p style={{ textIndent: '0pt', textAlign: 'right',fontWeight:'normal' }}>{checkBox.esic?(salarySlipData.increse_sal*0.04):''}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '16pt' }}>
@@ -608,7 +661,7 @@ const SalarySlip = () => {
                                 <p className="s5" style={{ paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
                             </td>
                             <td style={{ width: '61pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#F0DCDB" }} colSpan={2}>
-                                <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '35pt', textIndent: '0pt', textAlign: 'left' }}>29,800</p>
+                                <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '35pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal-(checkBox.esic?(salarySlipData.increse_sal*0.04):0)-(checkBox.pf?(salarySlipData.increse_sal*0.12):0)-200)}</p>
                             </td>
                             <td style={{ width: '194pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#FAE9D9" }} colSpan={4}>
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
@@ -639,7 +692,14 @@ const SalarySlip = () => {
                     </div>
                 </div>
             </div>
-            <button className='btn btn-primary' onClick={downloadPdfDocument}>download Pdf</button>
+            <div className='text-center'>
+            <button className="btn btn-primary" type="button" onClick={downloadPdfDocument} disabled={loader}>
+            {loader && <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>}
+                Download Pdf
+            </button>
+            </div> 
+           </>
+            }
         </div>
     )
 }

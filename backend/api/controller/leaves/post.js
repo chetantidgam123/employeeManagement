@@ -329,7 +329,7 @@ const updateEmpLeave = ({ leavesModel }, { config }) =>
         if (attendance && attendance.length > 0) {
           let applied_leaves = 0;
           let att = JSON.parse(attendance[0].month_data)
-          att[moment(leave[0].leave_date).date()-1].punch_in = leave[0].leave_type=='FL'?'FL':'HL'
+          att[moment(leave[0].leave_date).date()-1].punch_in = leave[0].leave_type=='FL'?'L':'HL'
           for (let i = 0; i < att.length; i++) {
             if(att[i].punch_in=='L'){
               applied_leaves = applied_leaves+1;
