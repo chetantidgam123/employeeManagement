@@ -52,7 +52,7 @@ const LeavesDetails = () => {
             })
     }
     const getLeavesData = async () => {
-        await getCall('leaves/getTotalLeavesData')
+        await postCall('leaves/getTotalLeavesData',{end_Date:moment()})
             .then((result) => {
                 if (result.data.code == 200) {
                     let {total_leaves,applied_leaves,pending_leaves} = result.data.data

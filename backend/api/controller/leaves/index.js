@@ -1,8 +1,8 @@
 const multer = require('multer');
 const path = require('path');
 const { authorize, authorizeAdmin } = require('../../../_middleware')
-const { apply_leave, apply_leave_schema, getLeaveByEmpIdAndMonth_schema, getLeaveByEmpIdAndMonth, getEmpWhoAplLeave_schema, getEmpWhoAplLeave, getEmpLeaveDateRange_schema, getEmpLeaveDateRange, updateEmpLeave, updateEmpLeave_schema, getLeavesList_schema, getLeavesList, } = require('./post')
-const { getTotalLeavesData } = require('./get');
+const {getTotalLeavesData, apply_leave, apply_leave_schema, getLeaveByEmpIdAndMonth_schema, getLeaveByEmpIdAndMonth, getEmpWhoAplLeave_schema, getEmpWhoAplLeave, getEmpLeaveDateRange_schema, getEmpLeaveDateRange, updateEmpLeave, updateEmpLeave_schema, getLeavesList_schema, getLeavesList, } = require('./post')
+// const { getTotalLeavesData } = require('./get');
 const { _delete } = require('./delete');
 
 module.exports = (model, { config }) => {
@@ -37,7 +37,7 @@ module.exports = (model, { config }) => {
     router.post('/apply_leave', authorize(), apply_leave_schema, apply_leave(model, { config }));
     router.post('/getLeaveByEmpIdAndMonth', authorize(), getLeaveByEmpIdAndMonth_schema, getLeaveByEmpIdAndMonth(model, { config }));
     router.post('/getleaveslist', authorize(), getLeavesList_schema, getLeavesList(model, { config }));
-    router.get('/getTotalLeavesData', authorize(),getTotalLeavesData(model, { config }));
+    router.post('/getTotalLeavesData', authorize(),getTotalLeavesData(model, { config }));
     router.delete('/delete_leave/:id', authorize(), _delete(model, { config }));
 
 

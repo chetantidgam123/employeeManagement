@@ -1,0 +1,1 @@
+after negative leaves update deduction statrt new month from zero or 1.5

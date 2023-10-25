@@ -4,6 +4,8 @@ const moment = require("moment/moment");
 const getTotalLeavesData = ({ leavesModel }, { config }) =>
   async (req, res, next) => {
     const { emp_id } = req.user
+    const {end_Date} = req.body
+    console.log('**********',end_Date);
     try {
       const findDojQuery = `select doj from public."employee_profiles" WHERE emp_id = ?;`;
       const _doj = await db.sequelize.query(findDojQuery, {
@@ -28,7 +30,7 @@ const getTotalLeavesData = ({ leavesModel }, { config }) =>
       if(Number(_doj[0].doj.split('-')[0])<2023){
         startDate = moment('2023-01-01')
       }
-      var endDate = moment();
+      var endDate = end_Date;
       var betweenMonths = [];
       var noOfMonths = 0;
       const findMonthlyLeave = `select month,year,applied_leaves from public.attendances where emp_id = ?;`;

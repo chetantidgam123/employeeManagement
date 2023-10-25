@@ -3,7 +3,7 @@ import html2canvas from "html2canvas";
 import moment from 'moment'
 import { jsPDF } from "jspdf";
 import DatePicker from 'react-datepicker'
-import { postCall } from 'src/Services/service'
+import { getCall, postCall } from 'src/Services/service'
 import { error_toast, success_toast } from 'src/Services/swalService'
 import "./pdf.css"
 const SalarySlip = () => {
@@ -51,11 +51,32 @@ const SalarySlip = () => {
         }
         const previewSalSlip = async ()=>{
               await postCall('/users/getSalarySlip', jsonData)
-                .then((result) => {
+                .then(async (result) => {
                   if (result.data.status) {
-                    setSalarySlipData(result.data.data)
-                    setPreviewSlip(true)
-                    success_toast(result.data.message)
+                    await postCall('leaves/getTotalLeavesData',{end_Date:jsonData.year+'-'+jsonData.month+'-01'})
+                    .then((data) => {
+                        if (data.data.code == 200) {
+                            let slipData = result.data.data
+                            let levData = data.data.data
+                            slipData.pending_leaves = levData.pending_leaves
+                            slipData.daysCut  = 0;
+                            if(Number(levData.pending_leaves)>0 && Number(levData.pending_leaves) >= Number(slipData.applied_leaves) ){
+                                slipData.daysCut = 0;
+                            }
+                            else if(Number(levData.pending_leaves)>0 && Number(levData.pending_leaves) < Number(slipData.applied_leaves)){
+                                slipData.daysCut = Number(slipData.applied_leaves)-Number(levData.pending_leaves);
+                            }else{
+                                slipData.daysCut = Number(levData.pending_leaves)*(-1);
+                            }
+                            setSalarySlipData(slipData)
+                            setPreviewSlip(true)
+                        } else {
+                            error_toast(result.data.message)
+                        }
+                    })
+                    .catch((err) => {
+                      
+                    })
                   } else {
                     error_toast(result.data.message)
                   }
@@ -605,7 +626,7 @@ const SalarySlip = () => {
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
                             </td>
                             <td style={{ width: '36pt', borderRightStyle: 'solid', borderRightWidth: '1pt' }}>
-                                <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
+                                <p style={{ textIndent: '0pt', textAlign: 'right' ,fontWeight:'normal' }}>{salarySlipData.daysCut>0?((salarySlipData.increse_sal)/(moment(jsonData.year+'-'+jsonData.month+'-01').daysInMonth()))*salarySlipData.daysCut:''}</p>
                             </td>
                         </tr>
                         <tr style={{ height: '16pt' }}>
@@ -661,7 +682,7 @@ const SalarySlip = () => {
                                 <p className="s5" style={{ paddingLeft: '1pt', textIndent: '0pt', textAlign: 'left' }}>INR</p>
                             </td>
                             <td style={{ width: '61pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#F0DCDB" }} colSpan={2}>
-                                <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '35pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal-(checkBox.esic?(salarySlipData.increse_sal*0.04):0)-(checkBox.pf?(salarySlipData.increse_sal*0.12):0)-200)}</p>
+                                <p className="s5" style={{ paddingTop: '6pt', paddingLeft: '35pt', textIndent: '0pt', textAlign: 'right' }}>{(salarySlipData.increse_sal-(salarySlipData.daysCut>0?((salarySlipData.increse_sal)/(moment(jsonData.year+'-'+jsonData.month+'-01').daysInMonth()))*salarySlipData.daysCut:0)-(checkBox.esic?(salarySlipData.increse_sal*0.04):0)-(checkBox.pf?(salarySlipData.increse_sal*0.12):0)-200)}</p>
                             </td>
                             <td style={{ width: '194pt', borderTopStyle: 'solid', borderTopWidth: '1pt', borderLeftStyle: 'solid', borderLeftWidth: '1pt', borderBottomStyle: 'solid', borderBottomWidth: '1pt', borderRightStyle: 'solid', borderRightWidth: '1pt', backgroundColor: "#FAE9D9" }} colSpan={4}>
                                 <p style={{ textIndent: '0pt', textAlign: 'left' }}><br /></p>
